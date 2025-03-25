@@ -1,0 +1,49 @@
+{
+  "name": "react_new",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@paypal/react-paypal-js": "^8.8.2",
+    "@react-oauth/google": "^0.12.1",
+    "@reduxjs/toolkit": "^2.5.0",
+    "@tanstack/react-query-devtools": "^5.62.15",
+    "antd": "^5.22.6",
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.7",
+    "file-saver": "^2.0.5",
+    "jwt-decode": "^4.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.1.1",
+    "react-slick": "^0.30.3",
+    "recharts": "^2.15.1",
+    "redux-persist": "^6.0.0",
+    "slick-carousel": "^1.8.1",
+    "styled-components": "^6.1.13",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react-swc": "^3.5.0",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.17.0",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.16",
+    "globals": "^15.14.0",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.3.3",
+    "vite": "^6.0.5"
+  },
+  "proxy": "http://localhost:5173"
+}
