@@ -87,7 +87,7 @@ function HeaderComponent({ isHiddenSearch, isHiddenCart }) {
   
   return (
     <div style={{ width: '100%', background: 'rgb(26,148,255)', display: 'flex', justifyContent: 'center' }}>
-      <WarpperHeader style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <WarpperHeader justify="space-between">
         <Col span={5}>
           <WarpperTextHeader 
             
@@ -112,7 +112,7 @@ function HeaderComponent({ isHiddenSearch, isHiddenCart }) {
           </Col>
         )}
 
-        <Col span={6} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', gap: '14px' }}>
+        <Col span={5} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around'}}>
           <LoadingComponent isLoading={loading}>
             <WarpperHeaderAccount>
               {avatar ? (
@@ -137,12 +137,14 @@ function HeaderComponent({ isHiddenSearch, isHiddenCart }) {
           </LoadingComponent>
 
           {!isHiddenCart && (
-            <div onClick={handleNavigate('/order')} style={{ cursor: 'pointer' }}>
-              <Badge count={order.orderItems?.length} size="small">
-                <ShoppingCartOutlined style={{ fontSize: '30px', color: '#fff' }} />
-              </Badge>
+            <WarpperHeaderAccount>
+              <div onClick={handleNavigate('/order')} style={{ cursor: 'pointer' }}>
+                <Badge count={order.orderItems?.length} size="small">
+                  <ShoppingCartOutlined style={{ fontSize: '30px', color: '#fff' }} />
+                </Badge>
+              </div>
               <WarpperTextHeaderSmall>Giỏ hàng</WarpperTextHeaderSmall>
-            </div>
+            </WarpperHeaderAccount>
           )}
         </Col>
       </WarpperHeader>
