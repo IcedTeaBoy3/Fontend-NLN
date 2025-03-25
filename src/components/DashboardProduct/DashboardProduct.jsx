@@ -484,11 +484,20 @@ const DashboardProduct = () => {
   }
 
   // Xử lý khi thay đổi input khi tạo sản phẩm
-  const handleOnchange = (e) => {
-    setStateProduct({
-      ...stateProduct,
-      [e.target.name]: e.target.value
-    })
+  const handleOnchange = (e,field) => {
+    if (typeof e === 'object' && e.target) {
+      // Trường hợp Input bình thường (e là event)
+      setStateProduct({
+        ...stateProduct,
+        [e.target.name]: e.target.value,
+      })
+    } else {
+      // Trường hợp InputNumber (e là giá trị, field là tên)
+      setStateProduct({
+        ...stateProduct,
+        [field]: e,
+      })
+    }
   }
   // Xử lý khi thay đổi input khi cập nhật sản phẩm
   const handleOnchangeDetail = (e, field) => {
@@ -587,6 +596,10 @@ const DashboardProduct = () => {
                   required: true,
                   message: 'Vui lòng nhập vào tên sản phẩm!',
                 },
+                {
+                  min: 6,
+                  message: 'Tên sản phẩm phải lớn hơn 6 ký tự'
+                }
               ]}
             >
               <InputComponent value={stateProduct.name} onChange={handleOnchange} name="name"/>
@@ -634,9 +647,15 @@ const DashboardProduct = () => {
                   required: true,
                   message: 'Vui lòng nhập vào số lượng sản phẩm!',
                 },
+                { type: 'number', min: 1, message: 'Số lượng phải lớn hơn 0!' }
               ]}
             >
-              <InputComponent value={stateProduct.countInStock} onChange={handleOnchange} name="countInStock"/>
+              <InputNumber
+                value={stateProduct.countInStock}
+                onChange={(value) => handleOnchange(value, "countInStock")}
+                name="countInStock"
+                style={{ width: '50%' }}
+              />
             </Form.Item>
             <Form.Item
               label="Giá"
@@ -645,11 +664,17 @@ const DashboardProduct = () => {
                 {
                   required: true,
                   message: 'Vui lòng nhập vào giá sản phẩm!',
-                }
+                },
+                { type: 'number', min: 1, message: 'Giá phải lớn hơn 0!' }
                 
               ]}
             >
-              <InputComponent value={stateProduct.price} onChange={handleOnchange} name="price"/>
+              <InputNumber
+                value={stateProduct.price}
+                onChange={(value) => handleOnchange(value, "price")}
+                name="price"
+                style={{ width: '100%' }}
+              />
             </Form.Item>
             <Form.Item
               label="Mô tả"
@@ -659,6 +684,10 @@ const DashboardProduct = () => {
                   required: true,
                   message: 'Vui lòng nhập vào mô tả sản phẩm!',
                 },
+                {
+                  min: 10,
+                  message: 'Mô tả sản phẩm phải lớn hơn 10 ký tự'
+                }
               ]}
             >
               <InputComponent value={stateProduct.description} onChange={handleOnchange} name="description"/>
@@ -671,9 +700,15 @@ const DashboardProduct = () => {
                   required: true,
                   message: 'Vui lòng nhập vào đánh giá sản phẩm!',
                 },
+                { type: 'number', min: 1, max: 5, message: 'Đánh giá phải từ 1 đến 5!' }
               ]}
             >
-              <InputComponent value={stateProduct.rating} onChange={handleOnchange} name="rating"/>
+              <InputNumber
+                value={stateProduct.rating}
+                onChange={(value) => handleOnchange(value, "rating")}
+                name="rating"
+                style={{ width: '50%' }}
+              />
             </Form.Item>
             <Form.Item
               label="Giảm giá"
@@ -683,14 +718,25 @@ const DashboardProduct = () => {
                   required: true,
                   message: 'Vui lòng nhập giảm giá sản phẩm!',
                 },
+                { type: 'number', min: 1, message: 'Giảm giá phải lớn hơn 0!' }
               ]}
             >
-              <InputComponent value={stateProduct.discount} onChange={handleOnchange} name="discount"/>
+              <InputNumber
+                value={stateProduct.discount}
+                onChange={(value) => handleOnchange(value, "discount")}
+                name="discount"
+                style={{ width: '50%' }}
+              />
             </Form.Item>
             <Form.Item
               label="Hình ảnh"
               name="image"
-              
+              rules={[
+                {
+                  required: true,
+                  message: 'Vui lòng chọn hình ảnh sản phẩm!',
+                },
+              ]}
             >
               <div>
               
@@ -770,14 +816,13 @@ const DashboardProduct = () => {
                   required: true,
                   message: 'Vui lòng nhập vào số lượng sản phẩm!',
                 },
-                { type: 'number', min: 0, message: 'Số lượng phải lớn hơn 0!' }
+                { type: 'number', min: 1, message: 'Số lượng phải lớn hơn 0!' }
               ]}
             >
               <InputNumber 
                 value={stateDetailProduct.countInStock} 
                 onChange={(value) => handleOnchangeDetail(value, "countInStock")} 
                 name="countInStock" 
-                min={0} 
                 style={{ width: '50%' }}
               />
             </Form.Item>
@@ -804,6 +849,10 @@ const DashboardProduct = () => {
                   required: true,
                   message: 'Vui lòng nhập vào mô tả sản phẩm!',
                 },
+                {
+                  min: 10,
+                  message: 'Mô tả sản phẩm phải lớn hơn 10 ký tự'
+                }
               ]}
             >
               <InputComponent value={stateDetailProduct.description} onChange={handleOnchangeDetail} name="description"/>
@@ -820,8 +869,6 @@ const DashboardProduct = () => {
                 value={stateDetailProduct.rating} 
                 onChange={(value) => handleOnchangeDetail(value, "rating")} 
                 name="rating"
-                min={1} 
-                max={5} // Chỉ cho phép nhập từ 1 đến 5
                 style={{ width: '50%' }}
               />
             </Form.Item>
@@ -833,9 +880,19 @@ const DashboardProduct = () => {
                   required: true,
                   message: 'Vui lòng nhập vào giảm giá sản phẩm!',
                 },
+                {
+                  type: 'number',
+                  min: 1,
+                  message: 'Giảm giá phải lớn hơn 0!'
+                }
               ]}
             >
-              <InputComponent value={stateDetailProduct.discount} onChange={handleOnchangeDetail} name="discount"/>
+              <InputNumber
+                value={stateDetailProduct.discount}
+                onChange={(value) => handleOnchangeDetail(value, "discount")}
+                name="discount"
+                style={{ width: '50%' }}
+              />
             </Form.Item>
             <Form.Item
               label="Hình ảnh"

@@ -11,8 +11,8 @@ export default defineConfig({
   server: {
     port: 3001, // default: 3000
     proxy: {
-      '/api': 'http://localhost:5000',
-    },
+      target: 'https://techshop-vq9i.onrender.com',
+    }
   },
   
 });

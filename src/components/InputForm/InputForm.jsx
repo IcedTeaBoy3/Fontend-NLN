@@ -4,7 +4,7 @@ const InputForm = (props) => {
   const { placeholder="Nhập text",...rests } = props
   return (
     <WarpperInput 
-      placeholder={placeholder} 
+      placeholder={placeholder}
       {...rests}
     />
   )

@@ -132,7 +132,6 @@ const ProductDetailComponent = ({idProduct}) => {
                         <span className="bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded md:text-sm ">
                             -{product?.discount}%
                         </span>
-                        <span></span>
                     </WarpperProductPrice>
                     <WarpperAddressProduct>
                         <div>
@@ -165,6 +164,7 @@ const ProductDetailComponent = ({idProduct}) => {
                             { product?.countInStock === 0 && <span className='text-red-600'>* Sản phẩm đã hết hàng</span>}
                         </div>
                     </div>
+                    <p><span style={{fontWeight:'bold'}}>Mô tả:</span> {product?.description}</p>
                     <div style={{display:'flex',gap:'10px',alignItems:'center'}}>
                         <ButtonComponent 
                             size={40} 

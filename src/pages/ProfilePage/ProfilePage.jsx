@@ -39,10 +39,10 @@ const ProfilePage = () => {
   },[user])
   useEffect(() => {
     if(data?.status === 'success'){
-      Message.success('Cập nhật thành công')
+      Message.success(data?.message)
       getDetailUser(user?._id,user?.access_token)
     }else if(data?.status === 'error'){
-      Message.error('Cập nhật thất bại')
+      Message.error('Cập nhật thất bại '+data?.message)
     }
   },[data])
   const getDetailUser = async (id,token) => {
