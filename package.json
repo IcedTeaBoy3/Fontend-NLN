@@ -45,5 +45,5 @@
     "tailwindcss": "^3.3.3",
     "vite": "^6.0.5"
   },
-  "proxy": "http://localhost:5173"
+  "proxy": "https://techshop-vq9i.onrender.com"
 }
