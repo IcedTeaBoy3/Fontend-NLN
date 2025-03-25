@@ -1,6 +1,5 @@
 
 import { Row, Col,Image, Rate } from 'antd'
-import ImageProduct from '../../assets/images/Samsung_Galaxy_A34.png'
 import ImageProductSmall from '../../assets/images/Samsung_Galaxy_A34_small.jpg'
 import { WarpperStyleImageSmall,WarpperProductName,WarppperStarProduct,WarpperProductPrice,WarpperProducTextPrice,WarpperAddressProduct, WarpperQuantityProduct,WarpperInputNumber } from './style'
 import { MinusOutlined,PlusOutlined,ShoppingCartOutlined} from '@ant-design/icons'
