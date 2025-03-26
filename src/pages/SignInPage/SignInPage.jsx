@@ -25,33 +25,33 @@ const SignInPage = () => {
   const location = useLocation()
   const mutation = useMutationHook(data => UserService.loginUser(data))
   const { data, isPending} = mutation
-  // const clientId = "74286119981-1jpfu8iv0knciqrqndn115q8a9tac13g.apps.googleusercontent.com"; 
 
-  // const handleSuccess = (response) => {
-  //   const token = response.credential;
-  //   const user = jwt_decode.jwtDecode(token);
-  //   dispatch(updateUser({
-  //     access_token:token,
-  //     name:user.name,
-  //     email:user.email,
-  //     avatar:user.picture,
-  //     _id:user.sub,
-  //     isAdmin:false
-  //   }))
-  //   navigate('/')
-  //   Message.success("Đăng nhập thành công")
-  // };
+  const handleSuccess = async (response) => {
+    const token = response.credential;
+    const res = await UserService.loginUserGoogle(token)
+    if(res?.status === 'success'){
+      dispatch(updateUser({...res?.data,access_token:res?.access_token,refresh_token:res?.refresh_token}))
+      localStorage.setItem("access_token", JSON.stringify(res?.access_token))
+      localStorage.setItem("refresh_token", JSON.stringify(res?.refresh_token))
+      Message.success("Đăng nhập thành công")
+      if(location?.state){
+        navigate(location?.state)
+      }
+      navigate("/")
+    }else if(res?.status === 'error'){
+      Message.error("Đăng nhập thất bại")
+    }
+  };
 
-  // const handleFailure = () => {
-  //   console.error("Đăng nhập thất bại!");
-  // };
+  const handleFailure = () => {
+    console.error("Đăng nhập thất bại!");
+  };
   const navigate = useNavigate()
   useEffect(() => {
     if (data?.status === "success") {
       if(location?.state){
         navigate(location?.state)
       }else{
-
         navigate("/")
       }
       Message.success("Đăng nhập thành công")
@@ -89,7 +89,7 @@ const SignInPage = () => {
     mutation.mutate({email,password})
   }
   return (
-    // <GoogleOAuthProvider clientId={clientId}>
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_APP_GOOGLE_CLIENT_ID}>
 
       <div style={{display:'flex',justifyContent:'center',alignItems:'center',backgroundColor:'rgba(0,0,0,0.53)',height:'100vh'}}>
         <div style={{display:'flex',width:'800px',height:'445px',borderRadius:'6px',backgroundColor:'#fff'}}>
@@ -139,7 +139,7 @@ const SignInPage = () => {
             </LoadingComponent>
           <p><WarpperTextLight>Quên mật khẩu?</WarpperTextLight></p>
           <p>Chưa có tài khoản? <WarpperTextLight onClick={handleNavigateRegister}>Tạo tài khoản</WarpperTextLight></p>
-          {/* <GoogleLogin
+          <GoogleLogin
             onSuccess={handleSuccess}
             onError={handleFailure}
             theme="filled_blue"
@@ -147,7 +147,7 @@ const SignInPage = () => {
             text="signin_with"
             shape="pill"
             width=""
-          /> */}
+          />
           </WarpperContainerLeft>
           <WarpperContainerRight>
             <Image src={imageLogin} preview={false} alt='logo login' height={203} width={203}></Image>
@@ -156,7 +156,7 @@ const SignInPage = () => {
           </WarpperContainerRight>
         </div>
       </div>
-    // </GoogleOAuthProvider>
+    </GoogleOAuthProvider>
   )
 }
 

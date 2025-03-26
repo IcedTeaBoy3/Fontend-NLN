@@ -64,8 +64,8 @@ function HeaderComponent({ isHiddenSearch, isHiddenCart }) {
     }else if(type === 'my-order'){
       navigate('/my-order',{
         state: { 
-          id: user._id,
-          access_token: user.access_token
+          id: user?._id,
+          access_token: user?.access_token
         }
       });
     }else{

@@ -52,16 +52,15 @@ const TypeProductPage = () => {
   }
   return (
     <>
-      <div style={{height:'44px',padding: '0 120px',backgroundColor:'#fff',display:'flex',alignItems:'center',borderBottom:'1px solid #ccc'}}>
+      <div style={{height:'44px',padding: '0 120px',backgroundColor:'#fff',display:'flex',alignItems:'center', borderBottom:'1px solid #ccc'}}>
         <span style={{cursor:'pointer',fontWeight:'bold'}} onClick={() => navigate('/')}>Trang chủ </span>
         / <span style={{cursor:'pointer',fontWeight:'bold'}}>{state}</span>
       </div>
       <LoadingComponent isLoading={loading}>
-        <div style={{width:'100%',background:'#efefef',height:'calc(100vh - 64px)'}}>
-          <div style={{width:'1270px',margin:'0 auto',height:'100%'}}>
+        <div style={{width:'100%',background:'#efefef'}}>
+          <div style={{width:'1270px',margin:'0 auto'}}>
       
-            <Row style={{flexWrap: 'nowrap',paddingTop: '10px',height:'calc(100% - 20px)'}}> 
-                
+            <Row style={{flexWrap: 'nowrap',paddingTop: '10px',paddingBottom: '20px'}}> 
                 <WarpperNavbar span={4}>
                   <NavbarComponent />
                 </WarpperNavbar>

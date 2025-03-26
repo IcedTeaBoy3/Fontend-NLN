@@ -12,6 +12,17 @@ export const loginUser = async (data) => {
     // console.error(error);
   }
 };
+export const loginUserGoogle = async (token) => {
+  try {
+    const response = await axios.post(
+      `${import.meta.env.VITE_APP_URL}/api/users/sign-in-google`,
+      {token}
+    );
+    return response.data;
+  } catch (error) {
+    // console.error(error);
+  }
+}
 export const signupUser = async (data) => {
   try {
     const response = await axios.post(

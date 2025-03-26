@@ -21,12 +21,15 @@ const MyOrderPage = () => {
     const navigate = useNavigate();
     
     const fetchMyOrder = async () => {
-        if (!state?.id || !state?.access_token) return [];
+        if (!state?.id || !state?.access_token){
+            console.error('Không có user');
+            return [];
+        }
         try {
             const res = await OrderService.getAllOrder(state.id, state.access_token);
             return res.data;
         } catch (error) {
-            // console.error('Lỗi khi lấy đơn hàng:', error);
+            console.error('Lỗi khi lấy đơn hàng:', error);
             return [];
         }
     };

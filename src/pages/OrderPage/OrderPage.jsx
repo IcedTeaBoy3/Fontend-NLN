@@ -12,6 +12,7 @@ import LoadingComponent from "../../components/LoadingComponent/LoadingComponent
 import { updateUser } from "../../redux/Slides/userSlide";
 import { useNavigate } from "react-router-dom";
 import StepComponent from "../../components/StepComponent/StepComponent";
+import * as Message from "../../components/Message/Message";
 const { Title, Text } = Typography;
 
 const OrderPage = () => {
@@ -28,6 +29,7 @@ const OrderPage = () => {
     phone: '',
     address: '',
     city: '',
+    email: ''
   })
   // Gọi API cập nhật người dùng
   const mutationUpdate = useMutationHook((data) => {
@@ -44,7 +46,6 @@ const OrderPage = () => {
       dispatch(updateUser({
         ...stateUserDetail
       }));
-      // dispatch(updateUser({})); 
     }else if(dataUpdate?.status === "error"){
       message.error("Cập nhật thông tin thất bại vui lòng thử lại sau!");
       
@@ -58,7 +59,8 @@ const OrderPage = () => {
         name: user?.name,
         phone: user?.phone,
         address: user?.address,
-        city: user?.city
+        city: user?.city,
+        email: user?.email
       });
     }
   }, [isModalUpdateInfo]);
@@ -195,6 +197,10 @@ const OrderPage = () => {
   }
   // Mở modal cập nhật địa chỉ
   const handleChangeAddress = () => {
+    if(!user?.access_token){
+      Message.warning("Vui lòng đăng nhập để cập nhật thông tin giao hàng!");
+      navigate("/sign-in");
+    }
     setIsModalUpdateInfo(true);
   }
   const columns = [
