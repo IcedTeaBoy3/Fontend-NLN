@@ -17,6 +17,7 @@ import * as jwt_decode from "jwt-decode";
 import {useDispatch} from 'react-redux'
 import { updateUser } from '../../redux/Slides/userSlide'
 import { useLocation } from 'react-router-dom'
+// import { FacebookLogin } from '@react-oauth/facebook';
 const SignInPage = () => {
   const [isShowPassword,setIsShowPassword] = useState(false)
   const [email,setEmail] = useState('')
@@ -25,7 +26,7 @@ const SignInPage = () => {
   const location = useLocation()
   const mutation = useMutationHook(data => UserService.loginUser(data))
   const { data, isPending} = mutation
-
+  // Xử lý đăng nhập google
   const handleSuccess = async (response) => {
     const token = response.credential;
     const res = await UserService.loginUserGoogle(token)
@@ -42,10 +43,19 @@ const SignInPage = () => {
       Message.error("Đăng nhập thất bại")
     }
   };
-
+  
   const handleFailure = () => {
     console.error("Đăng nhập thất bại!");
   };
+
+  // const handleSuccessFaceBook = (response) => {
+  //   console.log('Login Success:', response);
+  // };
+
+  // const handleErrorFaceBook = () => {
+  //   console.log('Login Failed');
+  // };
+
   const navigate = useNavigate()
   useEffect(() => {
     if (data?.status === "success") {
@@ -148,6 +158,7 @@ const SignInPage = () => {
             shape="pill"
             width=""
           />
+          {/* <FacebookLogin onSuccess={handleSuccessFaceBook} onError={handleErrorFaceBook} /> */}
           </WarpperContainerLeft>
           <WarpperContainerRight>
             <Image src={imageLogin} preview={false} alt='logo login' height={203} width={203}></Image>

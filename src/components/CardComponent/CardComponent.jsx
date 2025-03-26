@@ -28,8 +28,8 @@ const CardComponent = (props) => {
         <span> Đã bán {selled}+</span>
       </WarpperReportText>
       <WarpperPriceText>
-          <span style={{marginRight:'8px'}}>{convertPrice(price)}</span>
-    
+        <span style={{marginRight:'8px'}}>{convertPrice(price)}</span>
+
       </WarpperPriceText>
     </WarpperCardStyle>
   )

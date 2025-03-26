@@ -45,7 +45,7 @@ function App() {
     response => response, 
     async (error) => {
         const originalRequest = error.config;;
-        if (error.response.status === 403 && error.response.data.message === "Token expired") {
+        if (error.response.status === 403 && error.response.message === "Token expired") {
           const newAccessToken = await refreshAccessToken();
           if (newAccessToken) {
             // Cập nhật token mới vào headers của request cũ

@@ -6,7 +6,6 @@ import { useState } from 'react'
 import InputComponent from '../InputComponent/InputComponent.jsx'
 import {useQueryHook } from '../../hooks/useMutationHook.js'
 import * as OrderService from '../../services/OrderService'
-import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { orderConstant } from '../../../constant.js'
 import { useRef } from 'react'
@@ -15,9 +14,6 @@ import { Space } from 'antd'
 import { useNavigate } from 'react-router-dom'
 const DashboardOrder = () => {
   const naviagte = useNavigate()
- 
-  // Lưu trạng thái row được chọn
-  const [rowSelected, setRowSelected] = useState('')
   
   // Lấy token ra
   const user =  useSelector(state => state.user)
@@ -35,26 +31,8 @@ const DashboardOrder = () => {
   const queryGetAllOrders= useQueryHook(['orders'],getAllOrders)
   const { data: dataOrder, isLoadingOrder } = queryGetAllOrders
   // fix lỗi lần đầu tiên chưa có data
-  useEffect(() => {
-    if(dataOrder?.data?.length){ 
-      setRowSelected(dataOrder?.data[0]?._id)
-    }
-  },[dataOrder])
-
-
-  const handleDetailOrder = () => {
-    
-    naviagte(`/detail-order-admin/${rowSelected}`)
-  }
   
-  // 2 cái nút sửa và xoá
-  const renderActions = () => {
-    return (
-      <div style={{display:'flex',gap:'10px'}}>
-        <Button type="primary" onClick={handleDetailOrder}>Xem chi tiết</Button>
-      </div>
-    )
-  }
+
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
     setSearchText(selectedKeys[0]);
@@ -199,7 +177,16 @@ const DashboardOrder = () => {
     {
       title: 'Action',
       dataIndex: 'action',
-      render: renderActions,
+      render: (_, record) => (
+        <div style={{display:'flex',gap:'10px'}}>
+          <Button type="primary" 
+            onClick={() => {
+            naviagte(`/detail-order-admin/${record.key}`)
+          }}
+          >Xem chi tiết
+          </Button>
+        </div>
+      ),
     },
   ];
   const dataTable = dataOrder?.data?.length && dataOrder?.data?.map((order) => {
@@ -226,13 +213,6 @@ const DashboardOrder = () => {
           dataSource={dataTable} 
           isLoading={isLoadingOrder} 
           columns={columns}
-          onRow={(record) => {
-            return {
-              onClick: () => {
-                setRowSelected(record.key)
-              }, // click row
-            }
-          }}
           // handleDeleteMany= {handleDeleteMany}
           nameExcel="Danh_sach_don_hang"
         /> 
