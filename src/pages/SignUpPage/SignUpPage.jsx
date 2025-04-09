@@ -4,7 +4,8 @@ import { ShoppingCartOutlined,EyeInvisibleOutlined,EyeOutlined } from '@ant-desi
 import InputForm from '../../components/InputForm/InputForm'
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent'
 import imageLogin from '../../assets/images/login.png'
-import {Image} from 'antd'
+import {Image,Form} from 'antd'
+
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { useMutationHook } from '../../hooks/useMutationHook'
@@ -54,7 +55,15 @@ const SignUpPage = () => {
         <WarpperContainerLeft>
           <h3 style={{fontSize:'24px',fontWeight:'500'}}>Xin chào</h3> 
           <p>Đăng nhập hoặc tạo tài khoản</p>
-          <InputForm style={{marginBottom:'10px',padding:'10px 0px'}} placeholder="abc@gmail.com" value={email} onChange={handleOnchangeEmail}/>
+          
+          <InputForm 
+            style={{marginBottom:'10px',padding:'10px 0px'}} 
+            placeholder="abc@gmail.com" 
+            value={email} 
+            onChange={handleOnchangeEmail}
+          />
+
+        
           <div style={{position:'relative'}}>
             <span
               onClick={() => setIsShowPassword(!isShowPassword)} 
@@ -85,7 +94,7 @@ const SignUpPage = () => {
             </span>
             <InputForm style={{padding:'10px 0px'}} placeholder="confirm password" type={ isShowConfirmPassword ? 'text':'password'} value={confirmPassword} onChange={handleOnchangeConfirmPassword}/>
           </div>
-          {data?.status==='error' && <span style={{color:'red'}}>{data?.message}</span>}
+          {data?.status==='error' && <span style={{color:'red',padding:'10px 0px 0px'}}>{data?.message}</span>}
           <LoadingComponent isLoading={isPending}>
             <ButtonComponent
               disabled={email === '' || password === '' || confirmPassword === ''}

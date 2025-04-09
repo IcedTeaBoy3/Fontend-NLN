@@ -308,14 +308,14 @@ const OrderPage = () => {
           >
             Xóa tất cả
           </Button>
-          <Table columns={columns} dataSource={order?.orderItems} pagination={false} rowKey="product" />
+          <Table columns={columns} dataSource={order?.orderItems} pagination={true} rowKey="product" />
         </Col>
 
         {/* Tổng kết đơn hàng */}
         <Col span={8}>
           <Card>
             <span style={{fontWeight:'bold'}}>Địa chỉ: </span>
-            <Title level={5}>{`${user?.address} ${user?.city}` }</Title>
+            <Title level={5}>{user?.address} - {user?.city}</Title>
             <span style={{color:'blue',cursor:'pointer'}} onClick={handleChangeAddress}>Thay đổi</span>
           </Card>
           <Card style={{ marginTop: 20 }}>

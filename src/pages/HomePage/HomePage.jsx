@@ -11,13 +11,13 @@ import { useQuery } from '@tanstack/react-query'
 import LoadingComponent from '../../components/LoadingComponent/LoadingComponent'
 import { useDebounceHook } from '../../hooks/useDebounceHook'
 import { useSelector } from 'react-redux'
-import { useEffect,useState } from 'react'
+import { useState } from 'react'
 // import NavbarComponent from '../../components/NavbarComponent/NavbarComponent'
 import CriteriaComponent from '../../components/CriteriaComponent/CriteriaComponent'
 function HomePage() {
   const searchProduct = useSelector(state => state.product?.search)
   const searchProductDebounce = useDebounceHook(searchProduct, 1000)
-  const [typeProduct, setTypeProduct] = useState([])
+  // const [typeProduct, setTypeProduct] = useState([])
   const [limit, setLimit] = useState(6)
   const fetchAllProducts = async (context) => {
     const limit = context?.queryKey && context?.queryKey[1]
@@ -27,10 +27,7 @@ function HomePage() {
   }
   const fetchAllProductsType = async () => {
     const res = await ProductService.getAllProductsType()
-    if(res?.status === 'success'){
-      setTypeProduct(res?.data)
-
-    }
+    return res
   }
 
 
@@ -39,19 +36,19 @@ function HomePage() {
     queryFn:fetchAllProducts, 
     retry: 3, 
     retryDelay: 1000,
-    isPreviousData: true 
+    keepPreviousData: true, 
   })
-  useEffect(() => {
-    fetchAllProductsType()
-  },[])
-
-  
+  const { data: typeProducts = [] } = useQuery({
+    queryKey: ['product-types'],
+    queryFn: fetchAllProductsType,
+    staleTime: 1000 * 60 * 10,
+  })
   
   return (
     <>
       <div style={{ width:'1270px', margin: '0 auto'}}>
         <WarpperTypeProduct>
-          {typeProduct.map((type,index) => {
+          {typeProducts?.data?.map((type,index) => {
             return <TypeProduct key={index} name={type} />
           })}
         </WarpperTypeProduct>

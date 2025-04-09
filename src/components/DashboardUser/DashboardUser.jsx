@@ -290,6 +290,7 @@ const DashboardUser = () => {
       handleCancelDelete()
     }else if(dataDelete?.status === 'error'){
       Message.error('Xoá người dùng thất bại')
+      handleCancelDelete()
     }
   },[dataDelete])
 

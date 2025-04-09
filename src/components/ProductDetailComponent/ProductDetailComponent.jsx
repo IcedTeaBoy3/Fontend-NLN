@@ -227,7 +227,7 @@ const ProductDetailComponent = ({idProduct}) => {
                             <div>
 
                                 <span>Giao đến </span>
-                                <span className="address">{user?.address}</span>
+                                <span className="address">{user?.address}-{user?.city}</span>
                             </div>
                             <span className="change-address" onClick={handleChangeAddress}>Đổi địa chỉ</span>
 
@@ -242,7 +242,7 @@ const ProductDetailComponent = ({idProduct}) => {
                                     <MinusOutlined style={{fontSize:'20px',color:'#000'}}  />
                                 </button>
                             
-                                <WarpperInputNumber min={1} max={product?.countInStock} value={quantity} onChange={handleChangeQuantity} />
+                                <WarpperInputNumber min={1} value={quantity} onChange={handleChangeQuantity} />
                                 <button style={{border:'none',padding:'4px',background:'transparent'}} onClick={handleIncreaseQuantity}>
 
                                     <PlusOutlined style={{fontSize:'20px',color:'#000',cursor:'pointer'}}  />

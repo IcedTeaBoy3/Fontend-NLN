@@ -45,16 +45,9 @@ const SignInPage = () => {
   };
   
   const handleFailure = () => {
-    console.error("Đăng nhập thất bại!");
+    Message.error("Đăng nhập thất bại")
   };
 
-  // const handleSuccessFaceBook = (response) => {
-  //   console.log('Login Success:', response);
-  // };
-
-  // const handleErrorFaceBook = () => {
-  //   console.log('Login Failed');
-  // };
 
   const navigate = useNavigate()
   useEffect(() => {
@@ -107,7 +100,14 @@ const SignInPage = () => {
           <WarpperContainerLeft>
             <h3 style={{fontSize:'24px',fontWeight:'500'}}>Xin chào</h3> 
             <p>Đăng nhập hoặc tạo tài khoản</p>
-            <InputForm style={{marginBottom:'10px',padding:'10px 0px'}} placeholder="abc@gmail.com" value={email} onChange={handleOnchangeEmail}/>
+            <InputForm 
+              style={{marginBottom:'10px',padding:'10px 0px'}} 
+              placeholder="abc@gmail.com" 
+              value={email}
+              onChange={handleOnchangeEmail}
+              
+              
+            />
             <div style={{position:'relative'}}>
               <span style={{
                 zIndex:'10',
@@ -158,7 +158,7 @@ const SignInPage = () => {
             shape="pill"
             width=""
           />
-          {/* <FacebookLogin onSuccess={handleSuccessFaceBook} onError={handleErrorFaceBook} /> */}
+
           </WarpperContainerLeft>
           <WarpperContainerRight>
             <Image src={imageLogin} preview={false} alt='logo login' height={203} width={203}></Image>
