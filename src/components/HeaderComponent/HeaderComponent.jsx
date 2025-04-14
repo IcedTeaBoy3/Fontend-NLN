@@ -1,7 +1,7 @@
 import { Col, Popover, Badge } from 'antd';
 import { UserOutlined, CaretDownOutlined, ShoppingCartOutlined,LogoutOutlined,SettingFilled,InfoCircleFilled } from '@ant-design/icons';
 import {  useState, useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import * as UserService from '../../services/UserService';
 import { resetUser } from '../../redux/Slides/userSlide';
@@ -22,6 +22,7 @@ import { resetOrderState } from '../../redux/Slides/orderSlide';
 function HeaderComponent({ isHiddenSearch, isHiddenCart }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
 
   const user = useSelector((state) => state.user, shallowEqual);
   const [loading, setLoading] = useState(false);
@@ -77,9 +78,14 @@ function HeaderComponent({ isHiddenSearch, isHiddenCart }) {
   const content = useMemo(
     () => (
       <div>
-        <WarpperContentPopover onClick={() => handleClickNavigate('profile')}><InfoCircleFilled /> Thông tin người dùng</WarpperContentPopover>
-        {user?.isAdmin && <WarpperContentPopover onClick={() => handleClickNavigate('admin')}><SettingFilled />  Quản lý hệ thống</WarpperContentPopover>}
-        <WarpperContentPopover onClick={() => handleClickNavigate('my-order')}><InfoCircleFilled /> Đơn hàng của tôi</WarpperContentPopover>
+        <WarpperContentPopover  
+          onClick={() => handleClickNavigate('profile')}
+        >
+          <InfoCircleFilled className="mr-2" />
+          Thông tin người dùng
+        </WarpperContentPopover>
+        {user?.isAdmin && <WarpperContentPopover isSelected={location.pathname === '/admin' } onClick={() => handleClickNavigate('admin')}><SettingFilled />  Quản lý hệ thống</WarpperContentPopover>}
+        <WarpperContentPopover  onClick={() => handleClickNavigate('my-order')}><InfoCircleFilled /> Đơn hàng của tôi</WarpperContentPopover>
         <WarpperContentPopover onClick={handleLogout}><LogoutOutlined /> Đăng xuất</WarpperContentPopover>
 
       </div>

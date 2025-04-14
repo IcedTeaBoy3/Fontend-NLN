@@ -38,7 +38,9 @@ const SignInPage = () => {
       if(location?.state){
         navigate(location?.state)
       }
-      navigate("/")
+      else{
+        navigate("/")
+      }
     }else if(res?.status === 'error'){
       Message.error("Đăng nhập thất bại")
     }

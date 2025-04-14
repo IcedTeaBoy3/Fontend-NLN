@@ -42,6 +42,7 @@ export const WarpperContentPopover = styled.p`
     margin: 0px;
     padding: 8px;
     &:hover{
+        background-color: rgb(201, 207, 212);
         color: rgb(26,148,255);
     }
 `

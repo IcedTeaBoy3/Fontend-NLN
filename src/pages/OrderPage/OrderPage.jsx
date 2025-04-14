@@ -13,6 +13,8 @@ import { updateUser } from "../../redux/Slides/userSlide";
 import { useNavigate } from "react-router-dom";
 import StepComponent from "../../components/StepComponent/StepComponent";
 import * as Message from "../../components/Message/Message";
+import { use } from "react";
+
 const { Title, Text } = Typography;
 
 const OrderPage = () => {
@@ -100,11 +102,16 @@ const OrderPage = () => {
     return order?.orderItems?.length > 0 && selectedProducts.length === order?.orderItems?.length;
   }, [selectedProducts, order?.orderItems]);
 
-  //
   useEffect(() => {
-    dispatch(selectedOrder({ selectedProducts }));
-  
-  }, [selectedProducts]);
+    if (order?.orderItems) {
+      const selected = order.orderItems.map(item => item.product);
+      setSelectedProducts(selected);
+    }
+  }, []);
+
+  useEffect(() => {
+    dispatch(selectedOrder({selectedProducts}));
+  }, [selectedProducts])
 
   useEffect(() => {
     setSelectedProducts(prev => prev.filter(id => order?.orderItems.some(item => item.product === id)));

@@ -130,7 +130,7 @@ const MyOrderPage = () => {
                             </Card>
                         ))
                     ) : (
-                        <p>Không có đơn hàng nào.</p>
+                        <p style={{height: '1000px'}}>Không có đơn hàng nào.</p>
                     )}  
                 </div>
             </LoadingComponent>
