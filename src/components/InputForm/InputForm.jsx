@@ -1,9 +1,8 @@
-import {memo} from 'react'
-import { WarpperInput } from './style'
-const InputForm = (props) => {
-  const { placeholder="Nhập text",rules,...rests } = props
+
+import { WrapperInput } from './style'
+const InputForm = ({ placeholder="Nhập text",rules,...rests }) => {
   return (
-    <WarpperInput 
+    <WrapperInput 
       placeholder={placeholder}
       rule={rules}
       {...rests}
@@ -11,4 +10,4 @@ const InputForm = (props) => {
   )
 }
 
-export default memo(InputForm)
+export default InputForm
