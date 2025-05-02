@@ -23,6 +23,8 @@ const ModalAuthentication = ({title,isOpen,handleOk,handleCancel,...rests}) => {
     const [mode,setMode] = useState(false)
     const dispatch = useDispatch()
     const [form] = Form.useForm()
+    const email = Form.useWatch('email', form);
+    const password = Form.useWatch('password', form);
     const mutation = useMutationHook(data => {
         if(mode){
             return UserService.signupUser(data)
@@ -197,25 +199,25 @@ const ModalAuthentication = ({title,isOpen,handleOk,handleCancel,...rests}) => {
                         <Form.Item>
                         <LoadingComponent isLoading={isPending}>
                             <ButtonComponent
-                            size={40} 
-                            htmlType="submit"
-                            styleButton={{
-                                backgroundColor:'rgb(255,57,69)',
-                                border:'none',
-                                borderRadius:'4px',
-                                height:'48px',
-                                width:'100%',
-                                margin:'10px 0 0px',
-                            }}
-                            styleTextButton={{
-                                color:'#fff',
-                                fontSize:'16px',
-                                fontWeight:'500',
-                                marginTop:'6px'
-                            }}
-                            
-                            textbutton={mode ? 'Đăng ký' : 'Đăng nhập'}
-                            icon={<ShoppingCartOutlined style={{fontSize:'30px',color:'#fff',display:'none'}} />}
+                                size={40} 
+                                htmlType="submit"
+                                styleButton={{
+                                    backgroundColor:'rgb(255,57,69)',
+                                    border:'none',
+                                    borderRadius:'4px',
+                                    height:'48px',
+                                    width:'100%',
+                                    margin:'10px 0 0px',
+                                }}
+                                styleTextButton={{
+                                    color:'#fff',
+                                    fontSize:'16px',
+                                    fontWeight:'500',
+                                    marginTop:'6px'
+                                }}
+                                disabled={!email || !password}
+                                textbutton={mode ? 'Đăng ký' : 'Đăng nhập'}
+                                icon={<ShoppingCartOutlined style={{fontSize:'30px',color:'#fff',display:'none'}} />}
                             />
                         </LoadingComponent>
                         </Form.Item>
@@ -224,19 +226,21 @@ const ModalAuthentication = ({title,isOpen,handleOk,handleCancel,...rests}) => {
                     <p>Chưa có tài khoản? <WarpperTextLight onClick={() => setMode(!mode)}>{mode ? 'Đăng nhập' : 'Tạo tài khoản'}</WarpperTextLight></p>
                     <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px', marginBottom: '10px' }}>
                     <div style={{ flex: 1, height: '1px', backgroundColor: '#ccc' }}></div>
-                    <p style={{ margin: '0 10px', whiteSpace: 'nowrap' }}>Hoặc tiếp tục bằng</p>
+                    <p style={{ margin: '0 10px', whiteSpace: 'nowrap', fontWeight:'bold' }}>Hoặc tiếp tục bằng</p>
                     <div style={{ flex: 1, height: '1px', backgroundColor: '#ccc' }}></div>
                     </div>
-                    <FacebookLogin />
-                    <GoogleLogin
-                        onSuccess={handleSuccess}
-                        onError={handleFailure}
-                        theme="filled_blue"
-                        size="large"
-                        text="signin_with"
-                        shape="pill"
-                        width=""
-                    />
+                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+
+                        <FacebookLogin handleOk={handleOk} handleCancel={handleCancel}/>
+                        <GoogleLogin
+                            onSuccess={handleSuccess}
+                            onError={handleFailure}
+                            theme="filled_blue"
+                            size="large"
+                            text="signin_with"
+                            shape="pill"
+                        />
+                    </div>
         
                     </WarpperContainerLeft>
                     <WarpperContainerRight>

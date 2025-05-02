@@ -1,27 +1,38 @@
-import { useEffect } from "react";
-
-const FacebookLogin = () => {
-  useEffect(() => {
-    window.fbAsyncInit = function () {
-      window.FB.init({
-        appId: import.meta.env.VITE_APP_FACEBOOK_CLIENT_ID,
-        cookie: true,
-        xfbml: true,
-        version: "v18.0", // kiểm tra version mới nhất
-      });
-    };
-  }, []);
-
+import * as UserService from "../../services/UserService";
+import * as Message from '../../components/Message/Message'
+import { updateUser } from '../../redux/Slides/userSlide'
+import {useDispatch} from 'react-redux'
+import { CustomFacebookLogin } from "./style";
+const FacebookLogin = ({handleOk,handleCancel,...rests}) => {
+  const dispatch = useDispatch()
   const handleLogin = () => {
     window.FB.login(
-      function (response) {
+      (response) => {
         if (response.authResponse) {
-          console.log("Welcome! Fetching your info.... ");
-          window.FB.api("/me", { fields: "name,email" }, function (userInfo) {
-            console.log("User Info: ", userInfo);
+          window.FB.api("/me", { fields: "name,email,picture" }, async function (userInfo) {
+            const newUser = {
+              name: userInfo.name,
+              email: userInfo.email,
+              avatar: userInfo.picture.data.url,
+            };
+
+            try {
+              const res = await UserService.loginUserFacebook(newUser);
+              if(res?.status=='success'){
+                dispatch(updateUser({...res?.data,access_token:res?.access_token,refresh_token:res?.refresh_token}))
+                localStorage.setItem("access_token", JSON.stringify(res?.access_token))
+                localStorage.setItem("refresh_token", JSON.stringify(res?.refresh_token))
+                Message.success("Đăng nhập thành công")
+                handleOk()
+              }else{
+                Message.error(res?.message)
+              }
+            } catch (error) {
+              Message.error(error)
+            }
           });
         } else {
-          console.log("User cancelled login or did not fully authorize.");
+          Message.error("Người dùng đã hủy đăng nhập Facebook");
         }
       },
       { scope: "public_profile,email" }
@@ -29,9 +40,9 @@ const FacebookLogin = () => {
   };
 
   return (
-    <button onClick={handleLogin} style={{ padding: "10px 20px" }}>
-      Login with Facebook
-    </button>
+    <CustomFacebookLogin onClick={handleLogin} >
+      Đăng nhập bằng FB
+    </CustomFacebookLogin>
   );
 };
 

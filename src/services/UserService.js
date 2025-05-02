@@ -23,6 +23,17 @@ export const loginUserGoogle = async (token) => {
     // console.error(error);
   }
 }
+export const loginUserFacebook = async (userInfo) => {
+  try {
+    const response = await axios.post(
+      `${import.meta.env.VITE_APP_URL}/api/users/sign-in-facebook`,
+      userInfo
+    );
+    return response.data;
+  } catch (error) {
+    // console.error(error);
+  }
+}
 export const signupUser = async (data) => {
   try {
     const response = await axios.post(

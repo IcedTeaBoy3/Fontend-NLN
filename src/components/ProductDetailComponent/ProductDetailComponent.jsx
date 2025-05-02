@@ -246,7 +246,7 @@ const ProductDetailComponent = ({idProduct}) => {
                             </WarpperQuantityProduct>
                             <div className='mt-3'>
                                 { product?.countInStock === 0 && <span className='text-red-600'>* Sản phẩm đã hết hàng</span>}
-                                { quantity > product?.countInStock && <span className='text-red-600'>* Số lượng sản phẩm quá số lượng tồn kho</span>}
+                                { (quantity > product?.countInStock && product?.countInStock !==0) && <span className='text-red-600'>* Số lượng sản phẩm quá số lượng tồn kho</span>}
                             </div>
                         </div>
                         <p><span style={{fontWeight:'bold'}}>Mô tả:</span> {product?.description}</p>
