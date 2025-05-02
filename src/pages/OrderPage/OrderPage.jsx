@@ -13,7 +13,7 @@ import { updateUser } from "../../redux/Slides/userSlide";
 import { useNavigate } from "react-router-dom";
 import StepComponent from "../../components/StepComponent/StepComponent";
 import * as Message from "../../components/Message/Message";
-import { use } from "react";
+import ModalAuthentication from "../../components/ModalAuthentication/ModalAuthentication";
 
 const { Title, Text } = Typography;
 
@@ -22,6 +22,13 @@ const OrderPage = () => {
   const navigate = useNavigate();
   const order = useSelector((state) => state.order);
   const user = useSelector((state) => state.user);
+
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const handleOk = () => {
+    setIsOpenModal(false);
+  };
+  const handleCancel = () => setIsOpenModal(false);
+
   const [isModalUpdateInfo, setIsModalUpdateInfo] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [formUpdate] = Form.useForm();
@@ -145,7 +152,6 @@ const OrderPage = () => {
       message.warning("Vui lòng chọn ít nhất một sản phẩm!");
       return;
     }
-
     dispatch(removeMultipleOrderProducts(selectedProducts));
     message.success("Xóa sản phẩm thành công!");
     // Cập nhật lại danh sách `selectedProducts` chỉ giữ sản phẩm chưa bị xóa
@@ -157,8 +163,8 @@ const OrderPage = () => {
   const handleOrderProduct = () => {
     if(!user?.access_token){
       message.warning("Vui lòng đăng nhập để mua hàng!");
-      navigate("/sign-in");
-      return;
+      setIsOpenModal(true);
+      return
     }
     if(order?.orderItemsSelected.length == 0){
       message.warning("Vui lòng chọn sản phẩm để mua!");
@@ -206,7 +212,8 @@ const OrderPage = () => {
   const handleChangeAddress = () => {
     if(!user?.access_token){
       Message.warning("Vui lòng đăng nhập để cập nhật thông tin giao hàng!");
-      navigate("/sign-in");
+      setIsOpenModal(true);
+      return;
     }
     setIsModalUpdateInfo(true);
   }
@@ -424,6 +431,13 @@ const OrderPage = () => {
           </Form>
         </LoadingComponent>
       </ModalComponent>
+      <ModalAuthentication
+        isOpen={isOpenModal}
+        handleOk={handleOk}
+        handleCancel={handleCancel}
+        width={800}
+        footer={null}>
+      </ModalAuthentication>
     </>
   );
 };

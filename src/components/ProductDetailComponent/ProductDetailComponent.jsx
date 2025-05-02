@@ -20,7 +20,8 @@ import { convertPrice } from '../../utils'
 import LikeButtonComponent from '../LikeButtonComponent/LikeButtonComponent'
 import CommentComponent from '../CommentComponent/CommentComponent'
 import ModalComponent from '../ModalComponent/ModalComponent'
-import InputComponent from '../InputComponent/InputComponent' 
+import InputComponent from '../InputComponent/InputComponent'
+import ModalAuthentication from '../ModalAuthentication/ModalAuthentication' 
 import { Form } from 'antd'
 import { useMutationHook } from '../../hooks/useMutationHook'
 import * as UserService from '../../services/UserService'
@@ -30,8 +31,12 @@ const ProductDetailComponent = ({idProduct}) => {
     const [quantity, setQuantity] = useState(1)
     const user = useSelector(state => state.user)
     const order = useSelector(state => state.order)
-    const navigate = useNavigate()
-    const location = useLocation()
+
+    const [isOpenModal, setIsOpenModal] = useState(false);
+    const handleOk = () => {
+        setIsOpenModal(false);
+    };
+    const handleCancel = () => setIsOpenModal(false);
     const dispatch = useDispatch()
     const fetchProductDetail = async (context) => {
         const idProduct = context?.queryKey && context?.queryKey[1]
@@ -114,9 +119,9 @@ const ProductDetailComponent = ({idProduct}) => {
     // Mở modal cập nhật địa chỉ
     const handleChangeAddress = () => {
         if(!user?.access_token){
-
             Message.warning("Vui lòng đăng nhập để cập nhật thông tin giao hàng")
-            navigate('/sign-in',{state:location?.pathname})
+            setIsOpenModal(true)
+            return
         }
         setIsModalUpdateInfo(true);
     }
@@ -129,30 +134,20 @@ const ProductDetailComponent = ({idProduct}) => {
         retryDelay: 1000,
     })
     
-    const handleChangeQuantity = (value) => {
-        if (value < 1) {
-            setQuantity(1);
-        } else if (value > product?.countInStock) {
-            setQuantity(product?.countInStock);
-        } else {
-            setQuantity(value);
-        }
-    };
-    
     const handleIncreaseQuantity = () => {
-        
-        setQuantity((prev) => (prev < product?.countInStock ? prev + 1 : prev));
+        setQuantity((prev) => (prev + 1 > product?.countInStock ? product?.countInStock+1 : prev + 1));
     };
     
     const handleDecreaseQuantity = () => {
-        setQuantity((prev) => (prev > 1 ? prev - 1 : prev));
+        setQuantity((prev) => (prev - 1 < 1 ? 1 : prev - 1));
     };
 
     
     const handleAddOrderProduct = () => {
         if(!user?._id){
             Message.warning("Vui lòng đăng nhập để mua hàng")
-            navigate('/sign-in',{state:location?.pathname})
+            setIsOpenModal(true)
+            return
         }else{
             const orderRedux = order?.orderItems.find(item => item.product === product?._id)
             if(orderRedux?.amount + quantity > product?.countInStock){
@@ -234,7 +229,7 @@ const ProductDetailComponent = ({idProduct}) => {
                         </WarpperAddressProduct>
                         <LikeButtonComponent  dataHref={import.meta.env.VITE_APP_IS_LOCAL ? "https://developers.facebook.com/docs/plugins/" : window.location.href} />
                         <div style={{margin:'10px 0 20px',borderBottom:'1px solid rgb(239, 239, 239)',paddingBottom:'20px',borderTop:'1px solid rgb(239, 239, 239)',paddingTop:'20px'}}>
-                            <div style={{marginBottom:'6px'}}>Số lượng</div>
+                            <div style={{marginBottom:'6px'}}>Số lượng:</div>
                             <WarpperQuantityProduct>
 
                                 <button style={{border:'none',padding:'4px',background:'transparent',cursor:'pointer'}} onClick={handleDecreaseQuantity}>
@@ -242,7 +237,7 @@ const ProductDetailComponent = ({idProduct}) => {
                                     <MinusOutlined style={{fontSize:'20px',color:'#000'}}  />
                                 </button>
                             
-                                <WarpperInputNumber min={1} value={quantity} onChange={handleChangeQuantity} />
+                                <WarpperInputNumber min={1} value={quantity} readOnly />
                                 <button style={{border:'none',padding:'4px',background:'transparent'}} onClick={handleIncreaseQuantity}>
 
                                     <PlusOutlined style={{fontSize:'20px',color:'#000',cursor:'pointer'}}  />
@@ -250,8 +245,8 @@ const ProductDetailComponent = ({idProduct}) => {
                 
                             </WarpperQuantityProduct>
                             <div className='mt-3'>
-
                                 { product?.countInStock === 0 && <span className='text-red-600'>* Sản phẩm đã hết hàng</span>}
+                                { quantity > product?.countInStock && <span className='text-red-600'>* Số lượng sản phẩm quá số lượng tồn kho</span>}
                             </div>
                         </div>
                         <p><span style={{fontWeight:'bold'}}>Mô tả:</span> {product?.description}</p>
@@ -272,7 +267,7 @@ const ProductDetailComponent = ({idProduct}) => {
                                     fontWeight:'500',
                                     marginTop:'6px'
                                 }}
-                                disabled={product?.countInStock === 0}
+                                disabled={product?.countInStock === 0 || quantity > product?.countInStock}
                                 textbutton={'Mua ngay'}
                                 onClick = {handleAddOrderProduct}
                                 icon={<ShoppingCartOutlined style={{fontSize:'30px',color:'#fff',display:'none'}} />}
@@ -369,6 +364,13 @@ const ProductDetailComponent = ({idProduct}) => {
                     </Form>
                 </LoadingComponent>`
             </ModalComponent>
+            <ModalAuthentication
+                isOpen={isOpenModal}
+                handleOk={handleOk}
+                handleCancel={handleCancel}
+                width={800}
+                footer={null}>
+            </ModalAuthentication>
         </>
         
     )

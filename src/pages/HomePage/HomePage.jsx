@@ -15,6 +15,7 @@ import { useState } from 'react'
 // import NavbarComponent from '../../components/NavbarComponent/NavbarComponent'
 import CriteriaComponent from '../../components/CriteriaComponent/CriteriaComponent'
 function HomePage() {
+
   const searchProduct = useSelector(state => state.product?.search)
   const searchProductDebounce = useDebounceHook(searchProduct, 1000)
   // const [typeProduct, setTypeProduct] = useState([])
@@ -96,6 +97,7 @@ function HomePage() {
         </div>
         <CriteriaComponent />
       </div>
+
     </>
   )
 }

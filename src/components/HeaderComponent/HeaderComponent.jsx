@@ -10,6 +10,7 @@ import * as Message from '../Message/Message';
 import LoadingComponent from '../LoadingComponent/LoadingComponent';
 import ButtonInputSearch from '../ButtonInputSearch/ButtonInputSearch';
 import { debounce } from 'lodash'; // Thêm debounce để tối ưu tìm kiếm
+import ModalAuthentication from '../ModalAuthentication/ModalAuthentication';
 import {
   WarpperHeader,
   WarpperTextHeader,
@@ -25,8 +26,19 @@ function HeaderComponent({ isHiddenSearch, isHiddenCart }) {
   const location = useLocation();
 
   const user = useSelector((state) => state.user, shallowEqual);
+  const [isOpenModal, setIsOpenModal] = useState(false)
+  const handleOk = () => {
+    setIsOpenModal(false);
+  };
+  const handleCancel = () => setIsOpenModal(false);
   const [loading, setLoading] = useState(false);
   const [isOpenPopup,setIsOpenPopup] = useState(false);
+
+  const handleOpenModal = (e) => {
+    e.stopPropagation(); // Ngăn chặn sự kiện click lan truyền lên các phần tử cha
+    setIsOpenModal(true);
+    
+  }
 
   // Cập nhật userName và avatar từ Redux state
   const userName = user?.name || '';
@@ -126,15 +138,23 @@ function HeaderComponent({ isHiddenSearch, isHiddenCart }) {
               ) : (
                 <UserOutlined style={{ fontSize: '30px' }} />
               )}
-              {user && user?.access_token ? (
-                <Popover content={content} trigger="click" open={isOpenPopup} onOpenChange={(visible) => setIsOpenPopup(visible)}>
-                  <div style={{ cursor: 'pointer' }} >{userName || user?.email}</div>
+
+              {user?.access_token ? (
+                <Popover
+                  content={content}
+                  trigger="click"
+                  open={isOpenPopup}
+                  onOpenChange={(visible) => setIsOpenPopup(visible)}
+                >
+                  <div style={{ cursor: 'pointer' }}>
+                    {userName || user.email}
+                  </div>
                 </Popover>
               ) : (
-                <div onClick={handleNavigate('/sign-in')} style={{ cursor: 'pointer' }}>
+                <div onClick={handleOpenModal} style={{ cursor: 'pointer' }}>
                   <WarpperTextHeaderSmall>Đăng nhập/Đăng ký</WarpperTextHeaderSmall>
                   <div>
-                    <WarpperTextHeaderSmall>Tài khoản </WarpperTextHeaderSmall>
+                    <WarpperTextHeaderSmall>Tài khoản</WarpperTextHeaderSmall>
                     <CaretDownOutlined />
                   </div>
                 </div>
@@ -154,6 +174,13 @@ function HeaderComponent({ isHiddenSearch, isHiddenCart }) {
           )}
         </Col>
       </WarpperHeader>
+      <ModalAuthentication
+        isOpen={isOpenModal}
+        handleOk={handleOk}
+        handleCancel={handleCancel}
+        width={800}
+        footer={null}>
+      </ModalAuthentication>
     </div>
   );
 }

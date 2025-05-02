@@ -60,6 +60,7 @@ export const WarpperAddressProduct = styled.div`
         font-size: 18px;
         line-height: 24px;
         font-weight: 500;
+        text-decoration: underline;
         cursor: pointer;
     }
 `
@@ -67,7 +68,7 @@ export const WarpperQuantityProduct = styled.div`
     display: flex;
     align-items: center;
     gap: 4px;
-    width: 120px;
+    width: 110px;
     border: 1px solid #ccc;
     border-radius: 4px;
 `

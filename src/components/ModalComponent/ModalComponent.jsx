@@ -1,9 +1,9 @@
 import React from 'react'
 import { CustomModal } from './style'
-const ModalComponent = ({title="Modal",isOpen,children,...rests}) => {
+const ModalComponent = ({title,isOpen,children,...rests}) => {
   return (
     <CustomModal title={title} open={isOpen} {...rests}>
-        {children}
+      {children}
     </CustomModal>
   )
 }
