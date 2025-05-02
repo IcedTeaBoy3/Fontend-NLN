@@ -1,26 +1,38 @@
+import { useEffect } from "react";
 
-import { LoginSocialFacebook } from "reactjs-social-login";
-import { FacebookLoginButton } from "react-social-login-buttons"; // Tuỳ chọn UI
 const FacebookLogin = () => {
-    const handleLogin = ({ provider, data }) => {
-        console.log("Login success:", provider, data);
-    
-        
-      };
-    const handleError = (error) => {
-        console.error("Login Failed: ", error);
-        // Xử lý lỗi khi đăng nhập không thành công
-    }
-    return (
-        <LoginSocialFacebook
+  useEffect(() => {
+    window.fbAsyncInit = function () {
+      window.FB.init({
+        appId: import.meta.env.VITE_APP_FACEBOOK_CLIENT_ID,
+        cookie: true,
+        xfbml: true,
+        version: "v18.0", // kiểm tra version mới nhất
+      });
+    };
+  }, []);
 
-            appId={import.meta.env.VITE_APP_FACEBOOK_CLIENT_ID}
-            onResolve={handleLogin}
-            onReject={handleError}
-        >
-            <FacebookLoginButton  onClick={() => console.log("Click nút Facebook")}/>
-        </LoginSocialFacebook>
-    )
-}
+  const handleLogin = () => {
+    window.FB.login(
+      function (response) {
+        if (response.authResponse) {
+          console.log("Welcome! Fetching your info.... ");
+          window.FB.api("/me", { fields: "name,email" }, function (userInfo) {
+            console.log("User Info: ", userInfo);
+          });
+        } else {
+          console.log("User cancelled login or did not fully authorize.");
+        }
+      },
+      { scope: "public_profile,email" }
+    );
+  };
 
-export default FacebookLogin
+  return (
+    <button onClick={handleLogin} style={{ padding: "10px 20px" }}>
+      Login with Facebook
+    </button>
+  );
+};
+
+export default FacebookLogin;
