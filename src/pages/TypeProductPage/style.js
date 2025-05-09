@@ -15,3 +15,10 @@ export const WarpperNavbar = styled(Col)`
     margin-top: 20px;
     width: 200px;
 `
+export const WarpperTypeProduct = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap:24px;
+    height: 44px;
+`

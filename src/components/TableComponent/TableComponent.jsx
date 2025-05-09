@@ -8,7 +8,6 @@ import * as XLSX from "xlsx";
 const TableComponent = (props) => {
     const { selectionType, dataSource, columns = [], isLoading=false,onRow,handleDeleteMany,nameExcel } = props;
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-    
     const rowSelection = {
       onChange: (selectedRowKeys) => {
         setSelectedRowKeys(selectedRowKeys);

@@ -41,7 +41,7 @@ const FacebookLogin = ({handleOk,handleCancel,...rests}) => {
 
   return (
     <CustomFacebookLogin onClick={handleLogin} >
-      Đăng nhập bằng FB
+      Đăng nhập bằng Facebook
     </CustomFacebookLogin>
   );
 };

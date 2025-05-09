@@ -268,7 +268,7 @@ const ProductDetailComponent = ({idProduct}) => {
                                     marginTop:'6px'
                                 }}
                                 disabled={product?.countInStock === 0 || quantity > product?.countInStock}
-                                textbutton={'Mua ngay'}
+                                textButton={'Mua ngay'}
                                 onClick = {handleAddOrderProduct}
                                 icon={<ShoppingCartOutlined style={{fontSize:'30px',color:'#fff',display:'none'}} />}
                             />
@@ -276,7 +276,7 @@ const ProductDetailComponent = ({idProduct}) => {
                                 size={40} 
                                 styleButton={{border:'1px solid rgb(13,92,182)',borderRadius:'4px',height:'48px',width:'220px'}}
                                 styleTextButton={{color:'rgb(13,92,182)',fontSize:'16px',marginTop:'6px'}}
-                                textbutton={'Mua trả sau'}
+                                textButton={'Mua trả sau'}
                                 icon={<ShoppingCartOutlined style={{fontSize:'30px',color:'#fff',display:'none'}} />}
 
                             />

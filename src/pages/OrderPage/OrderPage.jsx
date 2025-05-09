@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import StepComponent from "../../components/StepComponent/StepComponent";
 import * as Message from "../../components/Message/Message";
 import ModalAuthentication from "../../components/ModalAuthentication/ModalAuthentication";
+import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
 
 const { Title, Text } = Typography;
 
@@ -247,7 +248,7 @@ const OrderPage = () => {
       dataIndex: "price",
       render: (_, record) => (
         <>
-          <Text delete>{record.price} </Text>
+          <Text delete>{convertPrice(record.price)} </Text>
         </>
       ),
     },
@@ -255,12 +256,19 @@ const OrderPage = () => {
       title: "Số lượng",
       dataIndex: "amount",
       render: (_, record) => (
-        <InputNumber
-          min={1}
-          max={record.countInStock}
-          defaultValue={record.amount}
-          onChange={(value) => dispatch(updateOrderProduct({ product: record.product, amount: value }))}
-        />
+        <>
+          <InputNumber
+            min={1}
+            max={record.countInStock + 1}
+            defaultValue={record.amount}
+            onChange={(value) => dispatch(updateOrderProduct({ product: record.product, amount: value }))}
+
+          />
+          <Text type="secondary">/{record.countInStock}</Text>
+          {record.amount > record.countInStock && (
+            <p type="danger">Số lượng không đủ</p>
+          )}
+        </>
       ),
     },
     {
@@ -303,29 +311,27 @@ const OrderPage = () => {
 
   return (
     <>
-      <div style={{height:'44px',padding: '0 120px',backgroundColor:'rgb(239, 239, 239)',display:'flex',alignItems:'center',borderBottom:'1px solid #ccc'}}>
+      <div style={{height:'44px',padding: '0px 120px',backgroundColor:'rgb(239, 239, 239)',display:'flex',alignItems:'center',borderBottom:'1px solid #ccc'}}>
         <span style={{cursor:'pointer',fontWeight:'bold'}} onClick={() => navigate('/')}>Trang chủ </span>
         / Giỏ hàng
       </div>
-      <Row gutter={16} style={{ padding: 40 }}>
-        {/* Bảng sản phẩm */}
+      <Row gutter={16} style={{ padding: '40px 120px' }}>
         <Col span={16}>
           <StepComponent current={currentStep} items={items}/>
           <Title level={4} className="mt-4">Giỏ hàng</Title>
-          <Button
+          <ButtonComponent
             type="primary"
-            danger
-            onClick={handleDeleteSelected}
+            size="medium"
+            textButton="Xoá tất cả"
+            icon={<DeleteOutlined/>}
             disabled={selectedProducts.length == 0}
-            style={{ marginBottom: "10px" }}
-            icon={<DeleteOutlined />}
+            onClick={handleDeleteSelected}
+            styleButton={{ marginBottom: "10px", backgroundColor: 'red' }}
           >
-            Xóa tất cả
-          </Button>
+
+          </ButtonComponent>
           <Table columns={columns} dataSource={order?.orderItems} pagination={true} rowKey="product" />
         </Col>
-
-        {/* Tổng kết đơn hàng */}
         <Col span={8}>
           <Card>
             <span style={{fontWeight:'bold'}}>Địa chỉ: </span>
@@ -347,9 +353,16 @@ const OrderPage = () => {
               <Title level={3} type="danger">{convertPrice(totalPrice)}</Title>
             </Row>
             <Text type="secondary">(Đã bao gồm VAT nếu có)</Text>
-            <Button type="primary" block style={{ marginTop: 10 }} size="large" onClick={handleOrderProduct}>
-              Mua hàng
-            </Button>
+            <ButtonComponent 
+              type="primary" 
+              size="large" 
+              block 
+              styleButton={{ marginTop: 10,fontWeight:'bold' }} 
+              onClick={handleOrderProduct} 
+              disabled={order?.orderItemsSelected.length == 0}
+              textButton="Mua hàng"
+            >
+            </ButtonComponent>
           </Card>
         </Col>
       </Row>

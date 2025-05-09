@@ -1,20 +1,20 @@
 
 import NavbarComponent from '../../components/NavbarComponent/NavbarComponent'
 import CardComponent from '../../components/CardComponent/CardComponent'
-import { WarpperProducts,WarpperNavbar } from './style'
+import { WarpperProducts,WarpperNavbar,WarpperTypeProduct } from './style'
 import { Row,Col,Pagination } from 'antd'
 import { useLocation } from 'react-router-dom'
 import * as ProductService from '../../services/ProductService'
 import { useEffect,useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import LoadingComponent from '../../components/LoadingComponent/LoadingComponent'
 import { useSelector,useDispatch } from 'react-redux'
 import { useDebounceHook } from '../../hooks/useDebounceHook'
-import { useNavigate } from 'react-router-dom'
 import { updateProduct } from "../../redux/Slides/productSlide";
+import TypeProduct from '../../components/TypeProduct/TypeProduct'
 
 
 const TypeProductPage = () => {
-  const navigate = useNavigate()
   const dispatch = useDispatch()
   const filterProducts = useSelector(state => state.product?.filterProducts)
   const searchProduct = useSelector(state => state.product?.search)
@@ -29,7 +29,6 @@ const TypeProductPage = () => {
   const fetchProductType = async (type,page,limit) => {
     setLoading(true)
     const res = await ProductService.getProductType(type,page,limit)
-    
     if(res?.status === 'success'){
       setLoading(false)
       dispatch(updateProduct(res?.data))
@@ -50,11 +49,23 @@ const TypeProductPage = () => {
   const handlePagination = (current,pageSize) => {
     setPanigate({ ...panigate, page: current-1, limit: pageSize })
   }
+  const fetchAllProductsType = async () => {
+    const res = await ProductService.getAllProductsType()
+    return res
+  }
+  const { isLoading:isLoadingTypeProduct,data: typeProducts = [] } = useQuery({
+    queryKey: ['product-types'],
+    queryFn: fetchAllProductsType,
+    staleTime: 1000 * 60 * 10,
+  })
   return (
     <>
-      <div style={{height:'44px',padding: '0 120px',backgroundColor:'#fff',display:'flex',alignItems:'center', borderBottom:'1px solid #ccc'}}>
-        <span style={{cursor:'pointer',fontWeight:'bold'}} onClick={() => navigate('/')}>Trang chủ </span>
-        / <span style={{cursor:'pointer',fontWeight:'bold'}}>{state}</span>
+      <div style={{ width:'1270px', margin: '0 auto'}}>
+        <WarpperTypeProduct>
+          {typeProducts?.data?.map((type,index) => {
+            return <TypeProduct key={index} name={type} />
+          })}
+        </WarpperTypeProduct>
       </div>
       <LoadingComponent isLoading={loading}>
         <div style={{width:'100%',background:'#efefef'}}>

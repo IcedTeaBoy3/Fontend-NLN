@@ -32,14 +32,14 @@ function HomePage() {
   }
 
 
-  const {isLoading,data: products,isPreviousData} = useQuery({ 
+  const {isLoading:isLoadingProduct,data: products,isPreviousData} = useQuery({ 
     queryKey:['products',limit,searchProductDebounce], 
     queryFn:fetchAllProducts, 
     retry: 3, 
     retryDelay: 1000,
     keepPreviousData: true, 
   })
-  const { data: typeProducts = [] } = useQuery({
+  const { isLoading:isLoadingTypeProduct,data: typeProducts = [] } = useQuery({
     queryKey: ['product-types'],
     queryFn: fetchAllProductsType,
     staleTime: 1000 * 60 * 10,
@@ -58,7 +58,7 @@ function HomePage() {
         <div id="container" style={{width: '1270px', margin: '0 auto'}}>
 
           <SlideComponent arrImages={[slider1,slider2,slider3]}/>
-          <LoadingComponent isLoading={isLoading}>
+          <LoadingComponent isLoading={isLoadingProduct}>
 
             <WarpperProducts>
               { products?.data.map((product) => {
@@ -83,7 +83,7 @@ function HomePage() {
             <div style={{width:'100%',display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
 
               <WarpperButtonMore 
-                textbutton={ isPreviousData ? 'Loading...' : products?.totalProducts === products?.data?.length ? 'Đã hiển thị tất cả sản phẩm' : 'Xem thêm sản phẩm'}
+                textButton={ isPreviousData ? 'Loading...' : products?.totalProducts === products?.data?.length ? 'Đã hiển thị tất cả sản phẩm' : 'Xem thêm sản phẩm'}
                 type='outline' 
                 styleButton={{border: '1px solid rgb(11,116,229',color:'rgb(11,116,229)',width:'240px',height:'38px',borderRadius:'4px'}}
                 styleTextButton={{fontWeight:'500',marginTop:'3px',color: products?.totalProducts === products?.data?.length && '#fff'}}

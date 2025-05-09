@@ -6,7 +6,7 @@ import InputForm from '../../components/InputForm/InputForm'
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent'
 import imageLogin from '../../assets/images/login.png'
 import {Image,Form} from 'antd'
-import { useState,useEffect } from 'react'
+import { useState,useEffect,useRef } from 'react'
 import { useMutationHook } from '../../hooks/useMutationHook'
 import * as UserService from '../../services/UserService'
 import LoadingComponent from '../../components/LoadingComponent/LoadingComponent'
@@ -23,6 +23,7 @@ const ModalAuthentication = ({title,isOpen,handleOk,handleCancel,...rests}) => {
     const [mode,setMode] = useState(false)
     const dispatch = useDispatch()
     const [form] = Form.useForm()
+    // const confirmPasswordRef = useRef(Form.Item.)
     const email = Form.useWatch('email', form);
     const password = Form.useWatch('password', form);
     const mutation = useMutationHook(data => {
@@ -53,6 +54,11 @@ const ModalAuthentication = ({title,isOpen,handleOk,handleCancel,...rests}) => {
     const handleFailure = () => {
         Message.error("Đăng nhập thất bại")
     };
+    const handleSwitchMode = () => {
+        setMode((prev) => !prev);
+        
+    }
+
     
     // Xử lý đăng nhập bằng tài khoản
     useEffect(() => {
@@ -116,42 +122,45 @@ const ModalAuthentication = ({title,isOpen,handleOk,handleCancel,...rests}) => {
                         >
                         <InputForm 
                             style={{padding:'10px'}} 
-                            placeholder="abc@gmail.com"  
+                            placeholder="abc@gmail.com"
+                            type="email"
+                            autoComplete="on"
                         />
                         </Form.Item>
         
                         <Form.Item
-                        name="password"
-                        
-                        rules={[
-                            { required: true, message: '* Vui lòng nhập mật khẩu' },
-                            { min: 6, message: '* Mật khẩu phải từ 6 ký tự trở lên' },
-                            { max: 20, message: '* Mật khẩu không được quá 20 ký tự' },
-                            // 1 chữ hoa, 1 chữ thường và 1 số và 1 ký tự đặc biệt
-                            { pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;"'<>,.?/~\\|-]).{6,20}$/, message: '* Mật khẩu cần ít nhất 1 chữ hoa, 1 chữ thường, 1 số và 1 ký tự đặc biệt' },
+                            name="password"
                             
-        
-                        ]}
-                        >
-                        <div style={{position:'relative'}}>
-                            <span style={{
-                            zIndex:'10',
-                            position:'absolute',
-                            top:'12px',
-                            right:'8px',
-                            cursor:'pointer'
-                            }} onClick={() => setIsShowPassword(!isShowPassword)}>
-                            {
-                                isShowPassword ? (<EyeOutlined style={{fontSize:'20px'}} />) : (<EyeInvisibleOutlined style={{fontSize:'20px'}} />)
-                            }
-                            </span>
-                            <InputForm 
-                            style={{padding:'10px'}} 
-                            placeholder="Nhập mật khẩu" 
-                            type={ isShowPassword ? 'text':'password'} 
-                            autoComplete="on"
-                            />
-                        </div>
+                            rules={[
+                                { required: true, message: '* Vui lòng nhập mật khẩu' },
+                                { min: 6, message: '* Mật khẩu phải từ 6 ký tự trở lên' },
+                                { max: 20, message: '* Mật khẩu không được quá 20 ký tự' },
+                                // 1 chữ hoa, 1 chữ thường và 1 số và 1 ký tự đặc biệt
+                                { pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;"'<>,.?/~\\|-]).{6,20}$/, message: '* Mật khẩu cần ít nhất 1 chữ hoa, 1 chữ thường, 1 số và 1 ký tự đặc biệt' },
+                                
+            
+                            ]}
+                            >
+                            <div style={{position:'relative'}}>
+                                <span style={{
+                                zIndex:'10',
+                                position:'absolute',
+                                top:'12px',
+                                right:'8px',
+                                cursor:'pointer'
+                                }} onClick={() => setIsShowPassword(!isShowPassword)}>
+                                {
+                                    isShowPassword ? (<EyeOutlined style={{fontSize:'20px'}} />) : (<EyeInvisibleOutlined style={{fontSize:'20px'}} />)
+                                }
+                                </span>
+                                <InputForm 
+                                    style={{padding:'10px'}} 
+                                    placeholder="Nhập mật khẩu" 
+                                    type={ isShowPassword ? 'text':'password'} 
+                                    autoComplete="on"
+                                
+                                />
+                            </div>
                         </Form.Item>
                         {mode && (
                         <Form.Item
@@ -190,6 +199,7 @@ const ModalAuthentication = ({title,isOpen,handleOk,handleCancel,...rests}) => {
                                 style={{padding:'10px'}} 
                                 placeholder="Nhập lại mật khẩu" 
                                 type={ isShowConfirmPassword ? 'text':'password'}
+                                
                             />
                             </div>
                         </Form.Item>
@@ -197,39 +207,39 @@ const ModalAuthentication = ({title,isOpen,handleOk,handleCancel,...rests}) => {
                         
         
                         <Form.Item>
-                        <LoadingComponent isLoading={isPending}>
-                            <ButtonComponent
-                                size={40} 
-                                htmlType="submit"
-                                styleButton={{
-                                    backgroundColor:'rgb(255,57,69)',
-                                    border:'none',
-                                    borderRadius:'4px',
-                                    height:'48px',
-                                    width:'100%',
-                                    margin:'10px 0 0px',
-                                }}
-                                styleTextButton={{
-                                    color:'#fff',
-                                    fontSize:'16px',
-                                    fontWeight:'500',
-                                    marginTop:'6px'
-                                }}
-                                disabled={!email || !password}
-                                textbutton={mode ? 'Đăng ký' : 'Đăng nhập'}
-                                icon={<ShoppingCartOutlined style={{fontSize:'30px',color:'#fff',display:'none'}} />}
-                            />
-                        </LoadingComponent>
+                            <LoadingComponent isLoading={isPending}>
+                                <ButtonComponent
+                                    size={40} 
+                                    htmlType="submit"
+                                    styleButton={{
+                                        backgroundColor:'rgb(255,57,69)',
+                                        border:'none',
+                                        borderRadius:'4px',
+                                        height:'48px',
+                                        width:'100%',
+                                        margin:'10px 0 0px',
+                                    }}
+                                    styleTextButton={{
+                                        color:'#fff',
+                                        fontSize:'16px',
+                                        fontWeight:'500',
+                                        marginTop:'6px'
+                                    }}
+                                    disabled={!email || !password}
+                                    textButton={mode ? 'Đăng ký' : 'Đăng nhập'}
+                                    icon={<ShoppingCartOutlined style={{fontSize:'30px',color:'#fff',display:'none'}} />}
+                                />
+                            </LoadingComponent>
                         </Form.Item>
                     </Form>  
                     <WarpperTextLight>{!mode && <p>Quên mật khẩu?</p>}</WarpperTextLight>
-                    <p>Chưa có tài khoản? <WarpperTextLight onClick={() => setMode(!mode)}>{mode ? 'Đăng nhập' : 'Tạo tài khoản'}</WarpperTextLight></p>
+                    <p>Chưa có tài khoản? <WarpperTextLight onClick={handleSwitchMode}>{mode ? 'Đăng nhập' : 'Tạo tài khoản'}</WarpperTextLight></p>
                     <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px', marginBottom: '10px' }}>
                     <div style={{ flex: 1, height: '1px', backgroundColor: '#ccc' }}></div>
                     <p style={{ margin: '0 10px', whiteSpace: 'nowrap', fontWeight:'bold' }}>Hoặc tiếp tục bằng</p>
                     <div style={{ flex: 1, height: '1px', backgroundColor: '#ccc' }}></div>
                     </div>
-                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                    <div className='flex justify-between'>
 
                         <FacebookLogin handleOk={handleOk} handleCancel={handleCancel}/>
                         <GoogleLogin

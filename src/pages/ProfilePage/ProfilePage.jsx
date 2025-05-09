@@ -106,7 +106,7 @@ const ProfilePage = () => {
                       borderRadius: '4px', 
                       border: '1px solid rgb(26,148,255)',
                     }}
-                    textbutton = {'Cập nhật'}
+                    textButton = {'Cập nhật'}
                     styleTextButton={{fontSize: '15px', fontWeight: '600', color: 'rgb(26,148,255)'}}
                     
                   ></ButtonComponent>
@@ -123,7 +123,7 @@ const ProfilePage = () => {
                       borderRadius: '4px', 
                       border: '1px solid rgb(26,148,255)',
                     }}
-                    textbutton = {'Cập nhật'}
+                    textButton = {'Cập nhật'}
                     styleTextButton={{fontSize: '15px', fontWeight: '600', color: 'rgb(26,148,255)'}}
                     
                   ></ButtonComponent>
@@ -140,7 +140,7 @@ const ProfilePage = () => {
                       borderRadius: '4px', 
                       border: '1px solid rgb(26,148,255)',
                     }}
-                    textbutton = {'Cập nhật'}
+                    textButton = {'Cập nhật'}
                     styleTextButton={{fontSize: '15px', fontWeight: '600', color: 'rgb(26,148,255)'}}
                     
                   ></ButtonComponent>
@@ -157,7 +157,7 @@ const ProfilePage = () => {
                       borderRadius: '4px', 
                       border: '1px solid rgb(26,148,255)',
                     }}
-                    textbutton = {'Cập nhật'}
+                    textButton = {'Cập nhật'}
                     styleTextButton={{fontSize: '15px', fontWeight: '600', color: 'rgb(26,148,255)'}}
                     
                   ></ButtonComponent>
@@ -174,7 +174,7 @@ const ProfilePage = () => {
                       borderRadius: '4px', 
                       border: '1px solid rgb(26,148,255)',
                     }}
-                    textbutton = {'Cập nhật'}
+                    textButton = {'Cập nhật'}
                     styleTextButton={{fontSize: '15px', fontWeight: '600', color: 'rgb(26,148,255)'}}
                     
                   ></ButtonComponent>
@@ -194,7 +194,7 @@ const ProfilePage = () => {
                       borderRadius: '4px', 
                       border: '1px solid rgb(26,148,255)',
                     }}
-                    textbutton = {'Cập nhật'}
+                    textButton = {'Cập nhật'}
                     styleTextButton={{fontSize: '15px', fontWeight: '600', color: 'rgb(26,148,255)'}}
                     
                   ></ButtonComponent>
