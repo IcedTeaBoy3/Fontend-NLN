@@ -239,7 +239,7 @@ const ModalAuthentication = ({title,isOpen,handleOk,handleCancel,...rests}) => {
                     <p style={{ margin: '0 10px', whiteSpace: 'nowrap', fontWeight:'bold' }}>Hoặc tiếp tục bằng</p>
                     <div style={{ flex: 1, height: '1px', backgroundColor: '#ccc' }}></div>
                     </div>
-                    <div className='flex justify-between'>
+                    <div className='space-y-4'>
 
                         <FacebookLogin handleOk={handleOk} handleCancel={handleCancel}/>
                         <GoogleLogin

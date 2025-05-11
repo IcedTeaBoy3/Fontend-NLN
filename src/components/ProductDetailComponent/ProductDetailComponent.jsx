@@ -1,18 +1,15 @@
 
-import { Row, Col,Image, Rate } from 'antd'
+import { Row, Col,Image, Rate,Form } from 'antd'
 import ImageProductSmall from '../../assets/images/Samsung_Galaxy_A34_Small.jpg'
 import { WarpperStyleImageSmall,WarpperProductName,WarppperStarProduct,WarpperProductPrice,WarpperProducTextPrice,WarpperAddressProduct, WarpperQuantityProduct,WarpperInputNumber } from './style'
-import { MinusOutlined,PlusOutlined,ShoppingCartOutlined} from '@ant-design/icons'
+import {ShoppingCartOutlined} from '@ant-design/icons'
 import ButtonComponent from '../ButtonComponent/ButtonComponent'
 
 import * as ProductService from '../../services/ProductService'
 import { useQuery } from '@tanstack/react-query'
 import LoadingComponent from '../LoadingComponent/LoadingComponent'
 import { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
-import { useLocation } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
+import { useSelector,useDispatch } from 'react-redux'
 import { updateUser } from '../../redux/Slides/userSlide'
 import { addOrderProduct} from '../../redux/Slides/orderSlide'
 import * as Message from '../Message/Message'
@@ -22,9 +19,9 @@ import CommentComponent from '../CommentComponent/CommentComponent'
 import ModalComponent from '../ModalComponent/ModalComponent'
 import InputComponent from '../InputComponent/InputComponent'
 import ModalAuthentication from '../ModalAuthentication/ModalAuthentication' 
-import { Form } from 'antd'
 import { useMutationHook } from '../../hooks/useMutationHook'
 import * as UserService from '../../services/UserService'
+import ProductQuantityControl from '../ProductQuantityControl/ProductQuantityControl'
 
 const ProductDetailComponent = ({idProduct}) => {
     
@@ -229,21 +226,18 @@ const ProductDetailComponent = ({idProduct}) => {
                         </WarpperAddressProduct>
                         <LikeButtonComponent  dataHref={import.meta.env.VITE_APP_IS_LOCAL ? "https://developers.facebook.com/docs/plugins/" : window.location.href} />
                         <div style={{margin:'10px 0 20px',borderBottom:'1px solid rgb(239, 239, 239)',paddingBottom:'20px',borderTop:'1px solid rgb(239, 239, 239)',paddingTop:'20px'}}>
-                            <div style={{marginBottom:'6px'}}>Số lượng:</div>
-                            <WarpperQuantityProduct>
+                            <div className='font-bold' style={{marginBottom:'6px'}}>Số lượng:</div>
+                            <div className="flex gap-4 items-center">
 
-                                <button style={{border:'none',padding:'4px',background:'transparent',cursor:'pointer'}} onClick={handleDecreaseQuantity}>
-
-                                    <MinusOutlined style={{fontSize:'20px',color:'#000'}}  />
-                                </button>
-                            
-                                <WarpperInputNumber min={1} value={quantity} readOnly />
-                                <button style={{border:'none',padding:'4px',background:'transparent'}} onClick={handleIncreaseQuantity}>
-
-                                    <PlusOutlined style={{fontSize:'20px',color:'#000',cursor:'pointer'}}  />
-                                </button>
-                
-                            </WarpperQuantityProduct>
+                                <ProductQuantityControl
+                                    value={quantity}
+                                    min={1}
+                                    max={product?.countInStock}
+                                    onIncrease={handleIncreaseQuantity}
+                                    onDecrease={handleDecreaseQuantity}
+                                />
+                                <span className='text-gray-500' style={{fontSize:'14px',marginTop:'6px'}}>{product?.countInStock} sản phẩm có sẳn</span>
+                            </div>
                             <div className='mt-3'>
                                 { product?.countInStock === 0 && <span className='text-red-600'>* Sản phẩm đã hết hàng</span>}
                                 { (quantity > product?.countInStock && product?.countInStock !==0) && <span className='text-red-600'>* Số lượng sản phẩm quá số lượng tồn kho</span>}
@@ -268,15 +262,16 @@ const ProductDetailComponent = ({idProduct}) => {
                                     marginTop:'6px'
                                 }}
                                 disabled={product?.countInStock === 0 || quantity > product?.countInStock}
-                                textButton={'Mua ngay'}
+                                textButton="Thêm vào giỏ hàng"
+                                
                                 onClick = {handleAddOrderProduct}
-                                icon={<ShoppingCartOutlined style={{fontSize:'30px',color:'#fff',display:'none'}} />}
+                                icon={<ShoppingCartOutlined style={{fontSize:'25px',color:'#fff'}} />}
                             />
                             <ButtonComponent 
                                 size={40} 
                                 styleButton={{border:'1px solid rgb(13,92,182)',borderRadius:'4px',height:'48px',width:'220px'}}
                                 styleTextButton={{color:'rgb(13,92,182)',fontSize:'16px',marginTop:'6px'}}
-                                textButton={'Mua trả sau'}
+                                textButton="Mua ngay"
                                 icon={<ShoppingCartOutlined style={{fontSize:'30px',color:'#fff',display:'none'}} />}
 
                             />

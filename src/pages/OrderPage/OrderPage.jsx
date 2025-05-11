@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { Table, Checkbox, Button, InputNumber, Card, Typography, Row, Col, Image, message, Form } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
+import { Table, Checkbox, Card, Typography, Row, Col, Image, Form } from "antd";
+import { DeleteOutlined} from "@ant-design/icons";
 import { useSelector, useDispatch } from "react-redux";
 import { removeOrderProduct, updateOrderProduct, removeMultipleOrderProducts, selectedOrder,updatePrice } from "../../redux/Slides/orderSlide";
 import { convertPrice } from "../../utils";
@@ -15,6 +15,7 @@ import StepComponent from "../../components/StepComponent/StepComponent";
 import * as Message from "../../components/Message/Message";
 import ModalAuthentication from "../../components/ModalAuthentication/ModalAuthentication";
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
+import ProductQuantityControl from "../../components/ProductQuantityControl/ProductQuantityControl";
 
 const { Title, Text } = Typography;
 
@@ -51,14 +52,13 @@ const OrderPage = () => {
 
   useEffect(() => {
     if(dataUpdate?.status === "success"){
-      message.success("Cập nhật thông tin thành công!");
+      Message.success(dataUpdate?.message);
       setIsModalUpdateInfo(false);
       dispatch(updateUser({
         ...stateUserDetail
       }));
     }else if(dataUpdate?.status === "error"){
-      message.error("Cập nhật thông tin thất bại vui lòng thử lại sau!");
-      
+      Message.error(dataUpdate?.message); 
     }
   }, [dataUpdate]);
 
@@ -150,11 +150,11 @@ const OrderPage = () => {
   // Xóa nhiều sản phẩm
   const handleDeleteSelected = () => {
     if (selectedProducts.length === 0) {
-      message.warning("Vui lòng chọn ít nhất một sản phẩm!");
+      Message.warning("Vui lòng chọn sản phẩm để xóa!");
       return;
     }
     dispatch(removeMultipleOrderProducts(selectedProducts));
-    message.success("Xóa sản phẩm thành công!");
+    Message.success("Xóa sản phẩm thành công!");
     // Cập nhật lại danh sách `selectedProducts` chỉ giữ sản phẩm chưa bị xóa
     setSelectedProducts(prev =>
       prev.filter(id => order?.orderItems.some(item => item.product === id))
@@ -163,14 +163,14 @@ const OrderPage = () => {
   // Xử lý đặt hàng
   const handleOrderProduct = () => {
     if(!user?.access_token){
-      message.warning("Vui lòng đăng nhập để mua hàng!");
+      Message.warning("Vui lòng đăng nhập để mua hàng!");
       setIsOpenModal(true);
       return
     }
     if(order?.orderItemsSelected.length == 0){
-      message.warning("Vui lòng chọn sản phẩm để mua!");
+      Message.warning("Vui lòng chọn sản phẩm để mua!");
     } else if(!user.phone || !user.address || !user.city || !user.name){
-      message.warning("Vui lòng cập nhật thông tin giao hàng!");    
+      Message.warning("Vui lòng cập nhật thông tin giao hàng!");    
       setIsModalUpdateInfo(true);
     }else{
       dispatch(updatePrice({ itemsPrice: tempPrice, shippingPrice: deliveryPrice, totalPrice }));
@@ -218,6 +218,22 @@ const OrderPage = () => {
     }
     setIsModalUpdateInfo(true);
   }
+  const handleIncreaseQuantity = (record) => {
+    
+    if(record.amount < record.countInStock){
+      dispatch(updateOrderProduct({ product: record.product, amount: record.amount + 1 }))
+    }else{
+      Message.warning("Số lượng không đủ");
+    }
+    
+  }
+  const handleDecreaseQuantity = (record) => {
+    if(record.amount > 1){
+      dispatch(updateOrderProduct({ product: record.product, amount: record.amount - 1 }))
+    }else{
+      Message.warning("Số lượng không thể nhỏ hơn 1");
+    }
+  }
   const columns = [
     {
       title: <Checkbox checked={isAllSelected} onChange={(e) => handleSelectAll(e.target.checked)} />,
@@ -256,19 +272,15 @@ const OrderPage = () => {
       title: "Số lượng",
       dataIndex: "amount",
       render: (_, record) => (
-        <>
-          <InputNumber
-            min={1}
-            max={record.countInStock + 1}
-            defaultValue={record.amount}
-            onChange={(value) => dispatch(updateOrderProduct({ product: record.product, amount: value }))}
-
-          />
-          <Text type="secondary">/{record.countInStock}</Text>
-          {record.amount > record.countInStock && (
-            <p type="danger">Số lượng không đủ</p>
-          )}
-        </>
+        
+        <ProductQuantityControl
+          value={record.amount}
+          min={1}
+          max={record.countInStock}
+          onIncrease={() => handleIncreaseQuantity(record)}
+          onDecrease={() => handleDecreaseQuantity(record)}
+        />
+        
       ),
     },
     {
@@ -280,12 +292,13 @@ const OrderPage = () => {
       title: "Hành động",
       dataIndex: "action",
       render: (_, record) => (
-        <Button
+        <ButtonComponent
           type="text"
-          icon={<DeleteOutlined />}
+          icon={<DeleteOutlined style={{fontSize:'20px'}}/>}
+          styleButton={{padding:'0px 0px 8px 8px'}}
           danger
           onClick={() => dispatch(removeOrderProduct(record.product))}
-        />
+        ></ButtonComponent>
       ),
     },
   ];
@@ -308,149 +321,155 @@ const OrderPage = () => {
     if (deliveryPrice === 20_000) return 1;
     return 0;
   }, [deliveryPrice]);
-
+  
   return (
     <>
-      <div style={{height:'44px',padding: '0px 120px',backgroundColor:'rgb(239, 239, 239)',display:'flex',alignItems:'center',borderBottom:'1px solid #ccc'}}>
+      <div style={{height:'44px',padding: '0 120px',backgroundColor:'rgb(239, 239, 239)',display:'flex',alignItems:'center',borderBottom:'1px solid #ccc'}}>
         <span style={{cursor:'pointer',fontWeight:'bold'}} onClick={() => navigate('/')}>Trang chủ </span>
         / Giỏ hàng
       </div>
-      <Row gutter={16} style={{ padding: '40px 120px' }}>
-        <Col span={16}>
-          <StepComponent current={currentStep} items={items}/>
-          <Title level={4} className="mt-4">Giỏ hàng</Title>
-          <ButtonComponent
-            type="primary"
-            size="medium"
-            textButton="Xoá tất cả"
-            icon={<DeleteOutlined/>}
-            disabled={selectedProducts.length == 0}
-            onClick={handleDeleteSelected}
-            styleButton={{ marginBottom: "10px", backgroundColor: 'red' }}
-          >
+      <div style={{ padding: "20px 110px", backgroundColor: "rgb(239, 239, 239)" }}>
 
-          </ButtonComponent>
-          <Table columns={columns} dataSource={order?.orderItems} pagination={true} rowKey="product" />
-        </Col>
-        <Col span={8}>
-          <Card>
-            <span style={{fontWeight:'bold'}}>Địa chỉ: </span>
-            <Title level={5}>{user?.address} - {user?.city}</Title>
-            <span style={{color:'blue',cursor:'pointer'}} onClick={handleChangeAddress}>Thay đổi</span>
-          </Card>
-          <Card style={{ marginTop: 20 }}>
-            <Row justify="space-between">
-              <Text>Tạm tính</Text> <Text>{convertPrice(tempPrice)}</Text>
-            </Row>
-            <Row justify="space-between">
-              <Text>Giảm giá</Text> <Text>{convertPrice(priceDiscount)}</Text>
-            </Row>
-            <Row justify="space-between">
-              <Text>Phí giao hàng</Text> <Text>{convertPrice(deliveryPrice)}</Text>
-            </Row>
-            <Row justify="space-between" style={{ marginTop: 10 }}>
-              <Title level={4}>Tổng tiền</Title>
-              <Title level={3} type="danger">{convertPrice(totalPrice)}</Title>
-            </Row>
-            <Text type="secondary">(Đã bao gồm VAT nếu có)</Text>
-            <ButtonComponent 
-              type="primary" 
-              size="large" 
-              block 
-              styleButton={{ marginTop: 10,fontWeight:'bold' }} 
-              onClick={handleOrderProduct} 
-              disabled={order?.orderItemsSelected.length == 0}
-              textButton="Mua hàng"
+        <Row justify="space-between" gutter={20}> 
+          <Col span={16}>
+            <Title level={4} className="mt-2">Giỏ hàng</Title>
+            <Card style={{ marginBottom: 20 }}>
+
+              <StepComponent current={currentStep} items={items}/>
+            </Card>
+            <ButtonComponent
+              type="primary"
+              size="medium"
+              textButton="Xoá tất cả"
+              icon={<DeleteOutlined style={{fontSize:'20px'}}/>}
+              disabled={selectedProducts.length == 0}
+              onClick={handleDeleteSelected}
+              styleButton={{ marginBottom: "10px", backgroundColor: 'red' }}
             >
+
             </ButtonComponent>
-          </Card>
-        </Col>
-      </Row>
-      <ModalComponent
-        title="Cập nhật thông tin giao hàng"
-        open={isModalUpdateInfo}
-        onOk={handleUpdateInfo}
-        onCancel={handleCancelUpdateInfo}
-        style={{ borderRadius: 0 }}
-      >
-        <LoadingComponent isLoading={loadingUpdate}>
-          <Form
-            name="formUpdate"
-            labelCol={{ span: 4 }}
-            wrapperCol={{ span: 20 }}
-            style={{ maxWidth: 600, padding: '20px' }}
-            initialValues={{ remember: true, }}
-            // onFinish={handleOnUpdateUser}
-            autoComplete="off"
-            form={formUpdate}
+            <Table columns={columns} dataSource={order?.orderItems} pagination={true} rowKey="product" />
+          </Col>
+          <Col span={8}>
+            <Card>
+              <span style={{fontWeight:'bold'}}>Địa chỉ: </span>
+              <Title level={5}>{user?.address} - {user?.city}</Title>
+              <span style={{color:'blue',cursor:'pointer'}} onClick={handleChangeAddress}>Thay đổi</span>
+            </Card>
+            <Card style={{ marginTop: 20 }}>
+              <Row justify="space-between">
+                <Text>Tạm tính</Text> <Text>{convertPrice(tempPrice)}</Text>
+              </Row>
+              <Row justify="space-between">
+                <Text>Giảm giá</Text> <Text>{convertPrice(priceDiscount)}</Text>
+              </Row>
+              <Row justify="space-between">
+                <Text>Phí giao hàng</Text> <Text>{convertPrice(deliveryPrice)}</Text>
+              </Row>
+              <Row justify="space-between" style={{ marginTop: 10 }}>
+                <Title level={4}>Tổng tiền</Title>
+                <Title level={3} type="danger">{convertPrice(totalPrice)}</Title>
+              </Row>
+              <Text type="secondary">(Đã bao gồm VAT nếu có)</Text>
+              <ButtonComponent 
+                type="primary" 
+                size="large" 
+                block 
+                styleButton={{ marginTop: 10,fontWeight:'bold' }} 
+                onClick={handleOrderProduct} 
+                disabled={order?.orderItemsSelected.length == 0}
+                textButton="Mua hàng"
+              >
+              </ButtonComponent>
+            </Card>
+          </Col>
+        </Row>
+        <ModalComponent
+          title="Cập nhật thông tin giao hàng"
+          open={isModalUpdateInfo}
+          onOk={handleUpdateInfo}
+          onCancel={handleCancelUpdateInfo}
+          style={{ borderRadius: 0 }}
+        >
+          <LoadingComponent isLoading={loadingUpdate}>
+            <Form
+              name="formUpdate"
+              labelCol={{ span: 4 }}
+              wrapperCol={{ span: 20 }}
+              style={{ maxWidth: 600, padding: '20px' }}
+              initialValues={{ remember: true, }}
+              // onFinish={handleOnUpdateUser}
+              autoComplete="off"
+              form={formUpdate}
 
-          >
-            <Form.Item
-              label="Name"
-              name="name"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input your Name!',
-                },
-              ]}
             >
-              <InputComponent value={stateUserDetail.name} onChange={handleOnchangeDetail} name="name" />
-            </Form.Item>
-            <Form.Item
-              label="City"
-              name="city"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input your city!',
-                },
-              ]}
-            >
-              <InputComponent value={stateUserDetail.city} onChange={handleOnchangeDetail} name="city" />
-            </Form.Item>
+              <Form.Item
+                label="Name"
+                name="name"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input your Name!',
+                  },
+                ]}
+              >
+                <InputComponent value={stateUserDetail.name} onChange={handleOnchangeDetail} name="name" />
+              </Form.Item>
+              <Form.Item
+                label="City"
+                name="city"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input your city!',
+                  },
+                ]}
+              >
+                <InputComponent value={stateUserDetail.city} onChange={handleOnchangeDetail} name="city" />
+              </Form.Item>
 
-            <Form.Item
-              label="Phone"
-              name="phone"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input your phone!',
-                },
-                {
-                  pattern: new RegExp(/(84|0[3|5|7|8|9])+([0-9]{8})\b/),
-                  message: 'Phone number is not valid!'
-                }
-              ]}
-            >
-              <InputComponent value={stateUserDetail.phone} onChange={handleOnchangeDetail} name="phone" />
-            </Form.Item>
-            <Form.Item
-              label="Address"
-              name="address"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input your address!',
-                }
+              <Form.Item
+                label="Phone"
+                name="phone"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input your phone!',
+                  },
+                  {
+                    pattern: new RegExp(/(84|0[3|5|7|8|9])+([0-9]{8})\b/),
+                    message: 'Phone number is not valid!'
+                  }
+                ]}
+              >
+                <InputComponent value={stateUserDetail.phone} onChange={handleOnchangeDetail} name="phone" />
+              </Form.Item>
+              <Form.Item
+                label="Address"
+                name="address"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input your address!',
+                  }
 
-              ]}
-            >
-              <InputComponent value={stateUserDetail.address} onChange={handleOnchangeDetail} name="address" />
-            </Form.Item>
+                ]}
+              >
+                <InputComponent value={stateUserDetail.address} onChange={handleOnchangeDetail} name="address" />
+              </Form.Item>
 
-            
-          </Form>
-        </LoadingComponent>
-      </ModalComponent>
-      <ModalAuthentication
-        isOpen={isOpenModal}
-        handleOk={handleOk}
-        handleCancel={handleCancel}
-        width={800}
-        footer={null}>
-      </ModalAuthentication>
+              
+            </Form>
+          </LoadingComponent>
+        </ModalComponent>
+        <ModalAuthentication
+          isOpen={isOpenModal}
+          handleOk={handleOk}
+          handleCancel={handleCancel}
+          width={800}
+          footer={null}>
+        </ModalAuthentication>
+      </div>
     </>
   );
 };

@@ -10,7 +10,7 @@ const criteria = [
 
 function CriteriaComponent() {
   return (
-    <div style={{ padding: '20px 20px', textAlign: 'center' }}>
+    <div className='w-[1270px] mx-auto my-5'>
       <Row gutter={[16, 16]} justify="center">
         {criteria.map((item, index) => (
           <Col key={index} xs={24} sm={12} md={6}>

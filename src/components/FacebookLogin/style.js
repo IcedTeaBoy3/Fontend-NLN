@@ -4,13 +4,13 @@ import { FacebookLoginButton } from "react-social-login-buttons";
 export const CustomFacebookLogin = styled(FacebookLoginButton)`
   height: 40px !important;
   border-radius: 20px !important;
-  margin: 0;
-  padding: 0 16px;
+  margin: 0 !important;
   font-size: 12px;
-
-  & > div {
-    font-size: 12px;
-    font-weight: 500;
+  width: 100% !important;
+  
+  & > div > div {
+    text-align: center !important;
+    font-size: 14px !important;
     color: white;
   }
 `;

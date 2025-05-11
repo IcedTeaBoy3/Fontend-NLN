@@ -9,7 +9,12 @@ const TypeProduct = ({name}) => {
     navigate(`/product/${type.normalize('NFD').replace(/[\u0300-\u036f]/g, "").replace(/đ/g, 'd').replace(/Đ/g, 'D').replace(/ /g, '-')}`, { state: type })
   }
   return (
-    <div style={{padding:'14px 20px',cursor:'pointer',borderRadius:'20px', backgroundColor: isActive ? '#ccc' : undefined}} onClick={() => handleNavigateTypeProduct(name)}>{name}</div>
+    <div className='hover:bg-[#ccc] hover:text-white' 
+    style={{padding:'14px 20px',color: isActive ? "white" : undefined,cursor:'pointer',borderRadius:'6px', backgroundColor: isActive ? '#ccc' : undefined}} 
+    onClick={() => handleNavigateTypeProduct(name)}
+  >
+      {name}
+    </div>
   )
 }
 

@@ -27,7 +27,7 @@ return (
               size={size} 
               styleButton={{backgroundColor:backgroundColorButton,borderRadius: borderRadius,color:colorButton, border: bordered}}
               styleTextButton={{color:colorButton}}
-              textbutton={textbutton}
+              textButton={textbutton}
               icon={<SearchOutlined />}
             />
     </div>

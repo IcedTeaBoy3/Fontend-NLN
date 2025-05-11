@@ -212,142 +212,149 @@ const PaymentPage = () => {
         / Thanh toán
       </div>
       <LoadingComponent isLoading={loadingAddOrder}>
-        <Row gutter={16} style={{ padding: 40, backgroundColor: '#f0f2f5' }}>
-          <Col span={16}>
-              <Title level={4}>Thanh Toán</Title>
-              {/* Chọn phương thức giao hàng */}
-              <Card className="mb-4 bg-blue-100">
-                  <h3 className="font-medium mb-2">Chọn phương thức giao hàng</h3>
-                  <Radio.Group onChange={(e) => setShippingMethod(e.target.value)} value={shippingMethod}>
-                    <div className="flex flex-col gap-2">
-                      <Radio value="FAST">
-                        <Text strong className="text-blue-600">FAST</Text> Giao hàng tiết kiệm
-                      </Radio>
-                      <Radio value="GO_JEK">
-                        <Text strong className="text-orange-500">GO_JEK</Text> Giao hàng tiết kiệm
-                      </Radio>
-                    </div>
-                  </Radio.Group>
+        <div style={{ padding: "20px 110px", backgroundColor: "rgb(239, 239, 239)" }}>
+
+
+          <Row gutter={20}>
+            <Col span={16}>
+                <Title level={4}>Thanh Toán</Title>
+                {/* Chọn phương thức giao hàng */}
+                <Card className="mb-4 bg-blue-100">
+                    <h3 className="font-medium mb-2">Chọn phương thức giao hàng</h3>
+                    <Radio.Group onChange={(e) => setShippingMethod(e.target.value)} value={shippingMethod}>
+                      <div className="flex flex-col gap-2">
+                        <Radio value="FAST">
+                          <Text strong className="text-blue-600">FAST</Text> Giao hàng tiết kiệm
+                        </Radio>
+                        <Radio value="GO_JEK">
+                          <Text strong className="text-orange-500">GO_JEK</Text> Giao hàng tiết kiệm
+                        </Radio>
+                      </div>
+                    </Radio.Group>
+                </Card>
+
+                {/* Chọn phương thức thanh toán */}
+                <Card className="bg-blue-100">
+                    <h3 className="font-medium mb-2">Chọn phương thức thanh toán</h3>
+                    <Radio.Group onChange={(e) => setPaymentMethod(e.target.value)} value={paymentMethod}>
+                      <div className="flex flex-col gap-2">
+                        <Radio value="COD">Thanh toán tiền mặt khi nhận hàng</Radio>
+                        <Radio value="Paypal">Thanh toán bằng Paypal</Radio>
+                        <Radio value="Momo">Thanh toán bằng Momo</Radio>
+                        <Radio value="ZaloPay">Thanh toán bằng ZaloPay</Radio>
+                        <Radio value="VNPAY">Thanh toán bằng VNPAY</Radio>
+                      </div>
+                    </Radio.Group>
+                </Card>
+            </Col>
+
+            {/* Tổng kết đơn hàng */}
+            <Col span={8}>
+              <Card>
+                <span style={{fontWeight:'bold'}}>Địa chỉ: </span>
+                <Title level={5}>{`${user?.address} ${user?.city}` }</Title>
+                <span style={{color:'blue',cursor:'pointer'}} onClick={handleChangeAddress}>Thay đổi</span>
               </Card>
-
-              {/* Chọn phương thức thanh toán */}
-              <Card className="bg-blue-100">
-                  <h3 className="font-medium mb-2">Chọn phương thức thanh toán</h3>
-                  <Radio.Group onChange={(e) => setPaymentMethod(e.target.value)} value={paymentMethod}>
-                    <div className="flex flex-col gap-2">
-                      <Radio value="COD">Thanh toán tiền mặt khi nhận hàng</Radio>
-                      <Radio value="Paypal">Thanh toán bằng Paypal</Radio>
-                    </div>
-                  </Radio.Group>
+              <Card style={{ marginTop: 20 }}>
+                <Row justify="space-between">
+                  <Text>Tạm tính</Text> <Text>{convertPrice(tempPrice)}</Text>
+                </Row>
+                <Row justify="space-between">
+                  <Text>Giảm giá</Text> <Text>{convertPrice(priceDiscount)}</Text>
+                </Row>
+                <Row justify="space-between">
+                  <Text>Phí giao hàng</Text> <Text>{convertPrice(deliveryPrice)}</Text>
+                </Row>
+                <Row justify="space-between" style={{ marginTop: 10 }}>
+                  <Title level={4}>Tổng tiền</Title>
+                  <Title level={3} type="danger">{convertPrice(totalPrice)}</Title>
+                </Row>
+                <Text type="secondary">(Đã bao gồm VAT nếu có)</Text>
+                {paymentMethod === "Paypal" ? (
+                  <PayPalButton amount={Math.round(totalPrice/25000)} onSuccess={handleAddOrderPaypal}/>
+                ) : (
+                  <Button type="primary" block className="bg-blue-500 text-white" style={{ marginTop: 10}} size="large" onClick={handleAddOrder}>
+                    Đặt hàng
+                  </Button>
+                )}
               </Card>
-          </Col>
+            </Col>
+          </Row>
+          <ModalComponent
+            title="Cập nhật thông tin giao hàng"
+            open={isModalUpdateInfo}
+            onOk={handleUpdateInfo}
+            onCancel={handleCancelUpdateInfo}
+            style={{ borderRadius: 0 }}
+          >
+            <LoadingComponent isLoading={loadingUpdate}>
+              <Form
+                name="formUpdate"
+                labelCol={{ span: 4 }}
+                wrapperCol={{ span: 20 }}
+                style={{ maxWidth: 600, padding: '20px' }}
+                initialValues={{ remember: true, }}
+                // onFinish={handleOnUpdateUser}
+                autoComplete="off"
+                form={formUpdate}
 
-          {/* Tổng kết đơn hàng */}
-          <Col span={8}>
-            <Card>
-              <span style={{fontWeight:'bold'}}>Địa chỉ: </span>
-              <Title level={5}>{`${user?.address} ${user?.city}` }</Title>
-              <span style={{color:'blue',cursor:'pointer'}} onClick={handleChangeAddress}>Thay đổi</span>
-            </Card>
-            <Card style={{ marginTop: 20 }}>
-              <Row justify="space-between">
-                <Text>Tạm tính</Text> <Text>{convertPrice(tempPrice)}</Text>
-              </Row>
-              <Row justify="space-between">
-                <Text>Giảm giá</Text> <Text>{convertPrice(priceDiscount)}</Text>
-              </Row>
-              <Row justify="space-between">
-                <Text>Phí giao hàng</Text> <Text>{convertPrice(deliveryPrice)}</Text>
-              </Row>
-              <Row justify="space-between" style={{ marginTop: 10 }}>
-                <Title level={4}>Tổng tiền</Title>
-                <Title level={3} type="danger">{convertPrice(totalPrice)}</Title>
-              </Row>
-              <Text type="secondary">(Đã bao gồm VAT nếu có)</Text>
-              {paymentMethod === "Paypal" ? (
-                <PayPalButton amount={Math.round(totalPrice/25000)} onSuccess={handleAddOrderPaypal}/>
-              ) : (
-                <Button type="primary" block className="bg-blue-500 text-white" style={{ marginTop: 10}} size="large" onClick={handleAddOrder}>
-                  Đặt hàng
-                </Button>
-              )}
-            </Card>
-          </Col>
-        </Row>
-        <ModalComponent
-          title="Cập nhật thông tin giao hàng"
-          open={isModalUpdateInfo}
-          onOk={handleUpdateInfo}
-          onCancel={handleCancelUpdateInfo}
-          style={{ borderRadius: 0 }}
-        >
-          <LoadingComponent isLoading={loadingUpdate}>
-            <Form
-              name="formUpdate"
-              labelCol={{ span: 4 }}
-              wrapperCol={{ span: 20 }}
-              style={{ maxWidth: 600, padding: '20px' }}
-              initialValues={{ remember: true, }}
-              // onFinish={handleOnUpdateUser}
-              autoComplete="off"
-              form={formUpdate}
-
-            >
-              <Form.Item
-                label="Name"
-                name="name"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please input your Name!',
-                  },
-                ]}
               >
-                <InputComponent value={stateUserDetail.name} onChange={handleOnchangeDetail} name="name" />
-              </Form.Item>
-              <Form.Item
-                label="City"
-                name="city"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please input your city!',
-                  },
-                ]}
-              >
-                <InputComponent value={stateUserDetail.city} onChange={handleOnchangeDetail} name="city" />
-              </Form.Item>
+                <Form.Item
+                  label="Name"
+                  name="name"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Please input your Name!',
+                    },
+                  ]}
+                >
+                  <InputComponent value={stateUserDetail.name} onChange={handleOnchangeDetail} name="name" />
+                </Form.Item>
+                <Form.Item
+                  label="City"
+                  name="city"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Please input your city!',
+                    },
+                  ]}
+                >
+                  <InputComponent value={stateUserDetail.city} onChange={handleOnchangeDetail} name="city" />
+                </Form.Item>
 
-              <Form.Item
-                label="Phone"
-                name="phone"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please input your phone!',
-                  },
-                ]}
-              >
-                <InputComponent value={stateUserDetail.phone} onChange={handleOnchangeDetail} name="phone" />
-              </Form.Item>
-              <Form.Item
-                label="Address"
-                name="address"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please input your address!',
-                  }
+                <Form.Item
+                  label="Phone"
+                  name="phone"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Please input your phone!',
+                    },
+                  ]}
+                >
+                  <InputComponent value={stateUserDetail.phone} onChange={handleOnchangeDetail} name="phone" />
+                </Form.Item>
+                <Form.Item
+                  label="Address"
+                  name="address"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Please input your address!',
+                    }
 
-                ]}
-              >
-                <InputComponent value={stateUserDetail.address} onChange={handleOnchangeDetail} name="address" />
-              </Form.Item>
+                  ]}
+                >
+                  <InputComponent value={stateUserDetail.address} onChange={handleOnchangeDetail} name="address" />
+                </Form.Item>
 
-              
-            </Form>
-          </LoadingComponent>
-        </ModalComponent>
+                
+              </Form>
+            </LoadingComponent>
+          </ModalComponent>
+        </div>
       </LoadingComponent>
     </>
   );

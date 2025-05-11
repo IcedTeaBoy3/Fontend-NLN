@@ -19,6 +19,8 @@ import {
   WarpperContentPopover
 } from './style';
 import { resetOrderState } from '../../redux/Slides/orderSlide';
+import ButtonComponent from '../ButtonComponent/ButtonComponent';
+import { convertPrice } from '../../utils';
 
 function HeaderComponent({ isHiddenSearch, isHiddenCart }) {
   const navigate = useNavigate();
@@ -32,7 +34,8 @@ function HeaderComponent({ isHiddenSearch, isHiddenCart }) {
   };
   const handleCancel = () => setIsOpenModal(false);
   const [loading, setLoading] = useState(false);
-  const [isOpenPopup,setIsOpenPopup] = useState(false);
+  const [isOpenPopupUser,setIsOpenPopupUser] = useState(false);
+  const [isOpenPopupCart,setIsOpenPopupCart] = useState(false);
 
   const handleOpenModal = (e) => {
     e.stopPropagation(); // Ngăn chặn sự kiện click lan truyền lên các phần tử cha
@@ -84,27 +87,68 @@ function HeaderComponent({ isHiddenSearch, isHiddenCart }) {
     }else{
       handleLogout();
     }
-    setIsOpenPopup(false);
+    setIsOpenPopupUser(false);
   }
   // Nội dung dropdown menu
   const content = useMemo(
     () => (
-      <div>
+      <>
         <WarpperContentPopover  
           onClick={() => handleClickNavigate('profile')}
+          className="hover:bg-gray-200 rounded-md"
         >
           <InfoCircleFilled className="mr-2" />
           Thông tin người dùng
         </WarpperContentPopover>
-        {user?.isAdmin && <WarpperContentPopover isSelected={location.pathname === '/admin' } onClick={() => handleClickNavigate('admin')}><SettingFilled />  Quản lý hệ thống</WarpperContentPopover>}
-        <WarpperContentPopover  onClick={() => handleClickNavigate('my-order')}><InfoCircleFilled /> Đơn hàng của tôi</WarpperContentPopover>
-        <WarpperContentPopover onClick={handleLogout}><LogoutOutlined /> Đăng xuất</WarpperContentPopover>
+        {user?.isAdmin && <WarpperContentPopover className="hover:bg-gray-200 rounded-md" $isSelected={location.pathname === '/admin' } onClick={() => handleClickNavigate('admin')}><SettingFilled />  Quản lý hệ thống</WarpperContentPopover>}
+        <WarpperContentPopover className="hover:bg-gray-200 rounded-md" onClick={() => handleClickNavigate('my-order')}><InfoCircleFilled /> Đơn hàng của tôi</WarpperContentPopover>
+        <WarpperContentPopover className="hover:bg-gray-200 rounded-md" onClick={handleLogout}><LogoutOutlined /> Đăng xuất</WarpperContentPopover>
 
-      </div>
+      </>
     ),[user?.isAdmin]);
+
+  // Nội dung giỏ hàng
+  const contentCart = useMemo(
+    () => (
+      <>
+        {order.orderItems?.length > 0 ? (
+          <div className='size-[500px] p-4'>
+            <p className='text-[#ccc]'>Sản phẩm mới thêm</p>
+          
+            {
+              order.orderItems.map((item) => (
+                <div className='flex justify-between gap-6 items-center py-2 hover:bg-gray-200 rounded-lg ' key={item.product} onClick={handleNavigate(`/product-details/${item.product}`)}>
+                  <div className='flex items-center gap-2'>
+                    <img src={item.image} alt={item.name} style={{ width: '35px', height: '35px', borderRadius: '5px' }} />
+                    {item.name}
+                  </div>
+                  <span className='text-red-500'>{convertPrice(item.price)}</span>
+                </div>
+                
+              ))
+            }
+            <div className="mt-4 flex justify-end">
+
+              <ButtonComponent 
+                textButton="Xem giỏ hàng"
+                onClick={handleNavigate('/order')}  
+                type="primary"
+                styleButton={{ background: 'rgb(26,148,255)', color: '#fff', borderRadius: '5px' }}
+                styleTextButton={{ color: '#fff' }}
+              />
+            </div>
+              
+          </div>
+        ) : (
+          <WarpperContentPopover >Giỏ hàng trống</WarpperContentPopover>
+        )}
+      </>
+    ),
+    [order.orderItems]
+  );
   
   return (
-    <div style={{ width: '100%', background: 'rgb(26,148,255)', display: 'flex', justifyContent: 'center' }}>
+    <div style={{ background: 'rgb(26,148,255)', display: 'flex', justifyContent: 'center' }}>
       <WarpperHeader justify="space-between">
         <Col span={5}>
           <WarpperTextHeader 
@@ -142,9 +186,9 @@ function HeaderComponent({ isHiddenSearch, isHiddenCart }) {
               {user?.access_token ? (
                 <Popover
                   content={content}
-                  trigger="click"
-                  open={isOpenPopup}
-                  onOpenChange={(visible) => setIsOpenPopup(visible)}
+                
+                  open={isOpenPopupUser}
+                  onOpenChange={(visible) => setIsOpenPopupUser(visible)}
                 >
                   <div style={{ cursor: 'pointer' }}>
                     {userName || user.email}
@@ -163,14 +207,22 @@ function HeaderComponent({ isHiddenSearch, isHiddenCart }) {
           </LoadingComponent>
 
           {!isHiddenCart && (
-            <WarpperHeaderAccount>
-              <div onClick={handleNavigate('/order')} style={{ cursor: 'pointer' }}>
-                <Badge count={order.orderItems?.length} size="small">
-                  <ShoppingCartOutlined style={{ fontSize: '30px', color: '#fff' }} />
-                </Badge>
-              </div>
-              <WarpperTextHeaderSmall>Giỏ hàng</WarpperTextHeaderSmall>
-            </WarpperHeaderAccount>
+            <Popover
+              content={contentCart}
+              open={isOpenPopupCart}
+              placement="bottomLeft"
+              onOpenChange={(visible) => setIsOpenPopupCart(visible)}
+            >
+
+              <WarpperHeaderAccount>
+                <div onClick={handleNavigate('/order')} style={{ cursor: 'pointer' }}>
+                  <Badge count={order.orderItems?.length} size="small">
+                    <ShoppingCartOutlined style={{ fontSize: '30px', color: '#fff' }} />
+                  </Badge>
+                </div>
+                <WarpperTextHeaderSmall>Giỏ hàng</WarpperTextHeaderSmall>
+              </WarpperHeaderAccount>
+            </Popover>
           )}
         </Col>
       </WarpperHeader>
